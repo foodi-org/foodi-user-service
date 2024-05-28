@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package foodi_user_service;
+option go_package="github.com/foodi-org/foodi-user-service";
+
+message Request {
+  string ping = 1;
+}
+
+message Response {
+  string pong = 1;
+}
+
+service Foodi_user_service {
+  rpc Ping(Request) returns(Response);
+}
