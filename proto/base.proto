@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package foodi_user_service;
+
+enum UserCoup {
+  BUYER = 0; // 普通用户
+  MERCHANT = 1; // 商家用户
+  RIDER = 2; // 配送骑手
+}
