@@ -11,7 +11,7 @@ type UserInfo struct {
 	ID        int64 `gorm:"primarykey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"-:all;index:idx_deleted_at"`
+	DeletedAt gorm.DeletedAt `gorm:"-,index:idx_deleted_at"`
 
 	Uid int64
 
