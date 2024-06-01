@@ -6,7 +6,13 @@ import (
 )
 
 func main() {
-	foodipkg.InitConn("root:123456@tcp(8.134.206.241:3306)/foodi_lbs_service?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai")
+	foodipkg.InitConn("root:123456@tcp(8.134.206.241:3306)/foodi_user_service?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai")
 	db := foodipkg.GetDBConn()
-	db.AutoMigrate(&modelgen.UserInfo{})
+	_ = db.AutoMigrate(&modelgen.UserInfo{})
+	_ = db.AutoMigrate(&modelgen.AccountInfo{})
+	_ = db.AutoMigrate(&modelgen.AccountInfo{})
+	_ = db.AutoMigrate(&modelgen.ArticleCommentInfo{})
+	_ = db.AutoMigrate(&modelgen.UserLocationInfo{})
+	_ = db.AutoMigrate(&modelgen.UserLoginInfo{})
+	_ = db.AutoMigrate(&modelgen.UserWechatInfo{})
 }
