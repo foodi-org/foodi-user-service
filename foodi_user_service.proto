@@ -16,25 +16,33 @@ message TokenReply {
 }
 
 message RegisterRequest {
+  string type = 1;
+  string phone = 2;
+  optional string code = 3;
+}
 
+message RegisterReply {
+  bool ok = 1;
+  string token = 2;
+  int64 uid = 3;
 }
 
 message UserRequest {
   string Uid = 1;
 }
 
-message Request {
-  string ping = 1;
+message UserReply {
+  string Name = 1;
+  string NikeName = 2;
 }
 
-message Response {
-  string pong = 1;
-}
 
+// 账号服务
 service Account {
   rpc Token(TokenRequest) returns (TokenReply);
+  rpc Register(RegisterRequest) returns (RegisterReply);
 }
 
-service Foodi_user_service {
-  rpc Ping(Request) returns(Response);
+service User {
+  rpc Info(UserRequest) returns(UserReply);
 }
