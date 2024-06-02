@@ -43,4 +43,6 @@ type ArticleInfo struct {
 	Location sql.NullString `gorm:"type:varchar(255);comment:精准定位信息"`
 
 	Merchant sql.NullInt64 `gorm:"comment:关联的商家"`
+
+	Cover sql.NullString `gorm:"type:varchar(255);comment:封面url"`
 }

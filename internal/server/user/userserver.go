@@ -31,3 +31,23 @@ func (s *UserServer) DetailInfo(ctx context.Context, in *foodi_user_service.User
 	l := userlogic.NewDetailInfoLogic(ctx, s.svcCtx)
 	return l.DetailInfo(in)
 }
+
+func (s *UserServer) CreateArticle(ctx context.Context, in *foodi_user_service.CreateArticleRequest) (*foodi_user_service.OKReply, error) {
+	l := userlogic.NewCreateArticleLogic(ctx, s.svcCtx)
+	return l.CreateArticle(in)
+}
+
+func (s *UserServer) AddComment(ctx context.Context, in *foodi_user_service.AddCommentRequest) (*foodi_user_service.OKReply, error) {
+	l := userlogic.NewAddCommentLogic(ctx, s.svcCtx)
+	return l.AddComment(in)
+}
+
+func (s *UserServer) Up(ctx context.Context, in *foodi_user_service.UpRequest) (*foodi_user_service.OKReply, error) {
+	l := userlogic.NewUpLogic(ctx, s.svcCtx)
+	return l.Up(in)
+}
+
+func (s *UserServer) SaveArticle(ctx context.Context, in *foodi_user_service.SaveArticleRequest) (*foodi_user_service.OKReply, error) {
+	l := userlogic.NewSaveArticleLogic(ctx, s.svcCtx)
+	return l.SaveArticle(in)
+}

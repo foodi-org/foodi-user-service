@@ -21,9 +21,9 @@ type ArticleCommentInfo struct {
 
 	Uid int64 `gorm:"index:idx_uid;comment:发布评论用户id"`
 
-	Content string `gorm:"type:text"`
+	Content string `gorm:"type:text;comment:评论内容"`
 
-	PostTime time.Time `gorm:"type:datetime"`
+	PostTime time.Time `gorm:"type:datetime;comment:发布时间"`
 
 	//
 	//  ParentId

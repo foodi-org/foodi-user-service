@@ -13,14 +13,19 @@ import (
 )
 
 type (
-	RegisterReply     = foodi_user_service.RegisterReply
-	RegisterRequest   = foodi_user_service.RegisterRequest
-	TokenReply        = foodi_user_service.TokenReply
-	TokenRequest      = foodi_user_service.TokenRequest
-	UserDetailReply   = foodi_user_service.UserDetailReply
-	UserDetailRequest = foodi_user_service.UserDetailRequest
-	UserReply         = foodi_user_service.UserReply
-	UserRequest       = foodi_user_service.UserRequest
+	AddCommentRequest    = foodi_user_service.AddCommentRequest
+	CreateArticleRequest = foodi_user_service.CreateArticleRequest
+	OKReply              = foodi_user_service.OKReply
+	RegisterReply        = foodi_user_service.RegisterReply
+	RegisterRequest      = foodi_user_service.RegisterRequest
+	SaveArticleRequest   = foodi_user_service.SaveArticleRequest
+	TokenReply           = foodi_user_service.TokenReply
+	TokenRequest         = foodi_user_service.TokenRequest
+	UpRequest            = foodi_user_service.UpRequest
+	UserDetailReply      = foodi_user_service.UserDetailReply
+	UserDetailRequest    = foodi_user_service.UserDetailRequest
+	UserReply            = foodi_user_service.UserReply
+	UserRequest          = foodi_user_service.UserRequest
 
 	Account interface {
 		Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error)

@@ -10,9 +10,11 @@ func main() {
 	db := foodipkg.GetDBConn()
 	_ = db.AutoMigrate(&modelgen.UserInfo{})
 	_ = db.AutoMigrate(&modelgen.AccountInfo{})
-	_ = db.AutoMigrate(&modelgen.AccountInfo{})
+	_ = db.AutoMigrate(&modelgen.ArticleInfo{})
 	_ = db.AutoMigrate(&modelgen.ArticleCommentInfo{})
 	_ = db.AutoMigrate(&modelgen.UserLocationInfo{})
 	_ = db.AutoMigrate(&modelgen.UserLoginInfo{})
 	_ = db.AutoMigrate(&modelgen.UserWechatInfo{})
+	_ = db.AutoMigrate(&modelgen.UpInfo{})
+	_ = db.AutoMigrate(&modelgen.SaveArticleInfo{})
 }

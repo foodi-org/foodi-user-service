@@ -146,8 +146,12 @@ var Account_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	User_BaseInfo_FullMethodName   = "/foodiUserService.User/BaseInfo"
-	User_DetailInfo_FullMethodName = "/foodiUserService.User/DetailInfo"
+	User_BaseInfo_FullMethodName      = "/foodiUserService.User/BaseInfo"
+	User_DetailInfo_FullMethodName    = "/foodiUserService.User/DetailInfo"
+	User_CreateArticle_FullMethodName = "/foodiUserService.User/CreateArticle"
+	User_AddComment_FullMethodName    = "/foodiUserService.User/AddComment"
+	User_Up_FullMethodName            = "/foodiUserService.User/Up"
+	User_SaveArticle_FullMethodName   = "/foodiUserService.User/SaveArticle"
 )
 
 // UserClient is the client API for User service.
@@ -156,6 +160,10 @@ const (
 type UserClient interface {
 	BaseInfo(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserReply, error)
 	DetailInfo(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error)
+	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
+	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error)
+	Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error)
+	SaveArticle(ctx context.Context, in *SaveArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
 }
 
 type userClient struct {
@@ -184,12 +192,52 @@ func (c *userClient) DetailInfo(ctx context.Context, in *UserDetailRequest, opts
 	return out, nil
 }
 
+func (c *userClient) CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, User_CreateArticle_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, User_AddComment_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, User_Up_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) SaveArticle(ctx context.Context, in *SaveArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, User_SaveArticle_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
 type UserServer interface {
 	BaseInfo(context.Context, *UserRequest) (*UserReply, error)
 	DetailInfo(context.Context, *UserDetailRequest) (*UserDetailReply, error)
+	CreateArticle(context.Context, *CreateArticleRequest) (*OKReply, error)
+	AddComment(context.Context, *AddCommentRequest) (*OKReply, error)
+	Up(context.Context, *UpRequest) (*OKReply, error)
+	SaveArticle(context.Context, *SaveArticleRequest) (*OKReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -202,6 +250,18 @@ func (UnimplementedUserServer) BaseInfo(context.Context, *UserRequest) (*UserRep
 }
 func (UnimplementedUserServer) DetailInfo(context.Context, *UserDetailRequest) (*UserDetailReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DetailInfo not implemented")
+}
+func (UnimplementedUserServer) CreateArticle(context.Context, *CreateArticleRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateArticle not implemented")
+}
+func (UnimplementedUserServer) AddComment(context.Context, *AddCommentRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
+}
+func (UnimplementedUserServer) Up(context.Context, *UpRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Up not implemented")
+}
+func (UnimplementedUserServer) SaveArticle(context.Context, *SaveArticleRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveArticle not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -252,6 +312,78 @@ func _User_DetailInfo_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_CreateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).CreateArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_CreateArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).CreateArticle(ctx, req.(*CreateArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_AddComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).AddComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_AddComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).AddComment(ctx, req.(*AddCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_Up_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).Up(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_Up_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).Up(ctx, req.(*UpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_SaveArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).SaveArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_SaveArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).SaveArticle(ctx, req.(*SaveArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +398,22 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DetailInfo",
 			Handler:    _User_DetailInfo_Handler,
+		},
+		{
+			MethodName: "CreateArticle",
+			Handler:    _User_CreateArticle_Handler,
+		},
+		{
+			MethodName: "AddComment",
+			Handler:    _User_AddComment_Handler,
+		},
+		{
+			MethodName: "Up",
+			Handler:    _User_Up_Handler,
+		},
+		{
+			MethodName: "SaveArticle",
+			Handler:    _User_SaveArticle_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
