@@ -24,6 +24,10 @@ type UserInfo struct {
 
 	Name string `gorm:"size:32;comment:用户姓名"`
 
+	NikeName string `gorm:"type:varchar(100);comment:昵称"`
+
+	Image string `gorm:"type:varchar(255);comment:用户头像"`
+
 	CardType enumgen.CardType `gorm:"default:1;comment:'证件类型'"`
 
 	CardID sql.NullString `gorm:"column:card_id;size:64;comment:证件号码"`

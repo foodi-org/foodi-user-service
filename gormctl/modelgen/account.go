@@ -20,10 +20,6 @@ type AccountInfo struct {
 
 	Type enumgen.UserType `gorm:"type:enum('consumer','merchant');comment:账号类型"`
 
-	NikeName string `gorm:"type:varchar(100);comment:昵称"`
-
-	Image string `gorm:"comment:用户头像"`
-
 	Phone sql.NullInt16 `gorm:"index:idx_phone"`
 
 	Password sql.NullString `gorm:"type:varchar(64)"`

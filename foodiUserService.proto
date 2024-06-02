@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package foodi-user-service;
+package foodiUserService;
 option go_package="github.com/foodi-org/foodi-user-service";
 
 enum UserCoup {
