@@ -1,9 +1,13 @@
 syntax = "proto3";
 
-package foodi_user_service;
+package foodi-user-service;
 option go_package="github.com/foodi-org/foodi-user-service";
 
-import "base.proto";
+enum UserCoup {
+  BUYER = 0; // 普通用户
+  MERCHANT = 1; // 商家用户
+  RIDER = 2; // 配送骑手
+}
 
 message TokenRequest {
   string username = 1;
@@ -18,7 +22,7 @@ message TokenReply {
 message RegisterRequest {
   string type = 1;
   string phone = 2;
-  optional string code = 3;
+  string code = 3;
 }
 
 message RegisterReply {
@@ -34,8 +38,25 @@ message UserRequest {
 message UserReply {
   string Name = 1;
   string NikeName = 2;
+  string Image = 3;
+  int32 LV = 4;
 }
 
+message UserDetailRequest {
+  string Uid = 1;
+}
+
+message UserDetailReply {
+  string Name = 1;
+  string NikeName = 2;
+  string Image = 3;
+  int32 Age = 4;
+  string Gender = 5;
+  string Birthday = 6;
+  string Region = 7;
+  int32 LV = 8;
+  int32 VIP = 9;
+}
 
 // 账号服务
 service Account {
@@ -44,5 +65,6 @@ service Account {
 }
 
 service User {
-  rpc Info(UserRequest) returns(UserReply);
+  rpc BaseInfo(UserRequest) returns(UserReply);
+  rpc DetailInfo(UserDetailRequest) returns (UserDetailReply);
 }
