@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/foodi-org/foodi-user-service/internal/config"
 	accountServer "github.com/foodi-org/foodi-user-service/internal/server/account"
@@ -10,9 +11,9 @@ import (
 	"github.com/foodi-org/foodi-user-service/internal/svc"
 	"github.com/foodi-org/foodi-user-service/pb/github.com/foodi-org/foodi-user-service"
 
-	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
+	zrpcconsul "github.com/zeromicro/zero-contrib/zrpc/registry/consul"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -20,22 +21,35 @@ import (
 var configFile = flag.String("f", "etc/foodiuserservice.yaml", "the config file")
 
 func main() {
+	var c = config.ServConf()
+	dir, _ := os.Getwd()
 	flag.Parse()
 
-	var c config.Config
-	conf.MustLoad(*configFile, &c)
-	ctx := svc.NewServiceContext(c)
+	if err := svc.NewServiceContext(c, dir, *configFile); err != nil {
+		panic(err)
+	}
 
+	// 注册服务
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		foodi_user_service.RegisterAccountServer(grpcServer, accountServer.NewAccountServer(ctx))
-		foodi_user_service.RegisterUserServer(grpcServer, userServer.NewUserServer(ctx))
+
+		// 注册账号服务
+		foodi_user_service.RegisterAccountServer(grpcServer, accountServer.NewAccountServer(svc.Svc()))
+
+		// 注册用户服务
+		foodi_user_service.RegisterUserServer(grpcServer, userServer.NewUserServer(svc.Svc()))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
+
+	// 注册中心使用 consul
+	if err := zrpcconsul.RegisterService(c.ListenOn, c.Consul); err != nil {
+		panic(err)
+	}
+
 	defer s.Stop()
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+	fmt.Printf("Starting foodi-user rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }
