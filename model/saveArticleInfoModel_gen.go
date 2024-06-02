@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/foodi-org/foodi-user-service/model/bo"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
@@ -26,6 +27,11 @@ type (
 		FindOne(ctx context.Context, id int64) (*SaveArticleInfo, error)
 		Update(ctx context.Context, data *SaveArticleInfo) error
 		Delete(ctx context.Context, id int64) error
+
+		/*DelSaveArticle
+		@Description: 移除文章收藏
+		*/
+		DelSaveArticle(ctx context.Context, bo bo.ArticleBo) error
 	}
 
 	defaultSaveArticleInfoModel struct {
@@ -76,6 +82,18 @@ func (m *defaultSaveArticleInfoModel) Insert(ctx context.Context, data *SaveArti
 func (m *defaultSaveArticleInfoModel) Update(ctx context.Context, data *SaveArticleInfo) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, saveArticleInfoRowsWithPlaceHolder)
 	_, err := m.conn.ExecCtx(ctx, query, data.Uid, data.ArticleId, data.Id)
+	return err
+}
+
+// DelSaveArticle
+//
+//	@Description: 移除文章收藏
+//	@param ctx
+//	@param bo
+//	@return error
+func (m *defaultSaveArticleInfoModel) DelSaveArticle(ctx context.Context, bo bo.ArticleBo) error {
+	query := fmt.Sprintf("delete from %s where `uid` = ? and `article_id` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, bo.Uid, bo.ArticleID)
 	return err
 }
 

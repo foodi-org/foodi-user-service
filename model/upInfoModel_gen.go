@@ -28,6 +28,11 @@ type (
 		Update(ctx context.Context, data *UpInfo) error
 		Delete(ctx context.Context, id int64) error
 
+		/*DelArticleUP
+		@Description: 取消文章收藏
+		@param bo
+		@return error
+		*/
 		DelArticleUP(ctx context.Context, bo bo.DelBO) error
 	}
 

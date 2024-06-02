@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/foodi-org/foodi-user-service/model"
+	"github.com/foodi-org/foodi-user-service/model/bo"
 
 	"github.com/foodi-org/foodi-user-service/internal/svc"
 	"github.com/foodi-org/foodi-user-service/pb/github.com/foodi-org/foodi-user-service"
@@ -28,7 +29,8 @@ func NewUpLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpLogic {
 
 // Up
 //
-//	@Description: 点赞文章/评论
+//	@Description:
+//	@param in
 //	@return *foodi_user_service.OKReply
 //	@return error
 func (l *UpLogic) Up(in *foodi_user_service.UpRequest) (*foodi_user_service.OKReply, error) {
@@ -58,16 +60,14 @@ func (l *UpLogic) Up(in *foodi_user_service.UpRequest) (*foodi_user_service.OKRe
 			return &foodi_user_service.OKReply{Ok: true}, nil
 		}
 	case foodi_user_service.ActionCoup_Cancel:
-		l.svcCtx.UpModel.Delete(l.ctx, in)
-	}
-
-	if _, err = l.svcCtx.UpModel.Insert(l.ctx, &model.UpInfo{
-		Uid:       sql.NullInt64{Int64: in.Uid, Valid: true},
-		ArticleId: sql.NullInt64{Int64: in.GetArticleID(), Valid: true},
-		CommentId: sql.NullInt64{Int64: in.GetCommentID(), Valid: in.GetCommentID() > 0},
-	}); err != nil {
-		return nil, err
-	} else {
+		if err = l.svcCtx.UpModel.DelArticleUP(l.ctx, bo.DelBO{
+			Uid:       in.GetUid(),
+			ArticleID: in.GetArticleID(),
+		}); err != nil {
+			return nil, err
+		}
 		return &foodi_user_service.OKReply{Ok: true}, nil
+	default:
+		return nil, errors.New("invalid action")
 	}
 }
