@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/foodi-org/foodi-user-service/internal/pkg/pkgconsul"
-	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 	"github.com/zeromicro/zero-contrib/zrpc/registry/consul"
@@ -137,18 +136,5 @@ func InitServConf(path string, filename string) error {
 		},
 		Key: lbsConf.ServiceName,
 	}
-
-	// 日志配置
-	servConf.Log = logx.LogConf{
-		ServiceName: lbsConf.ServiceName,
-		Mode:        "file",
-		//TimeFormat:  "",
-		Path:       path,
-		Level:      "info",
-		KeepDays:   10,
-		MaxBackups: 10,
-		Rotation:   "daily",
-	}
-
 	return nil
 }

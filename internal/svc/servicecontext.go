@@ -1,22 +1,19 @@
 package svc
 
 import (
-	foodipkg "github.com/foodi-org/foodi-pkg/mysql"
 	"github.com/foodi-org/foodi-user-service/internal/config"
 	"github.com/foodi-org/foodi-user-service/model"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"gorm.io/gorm"
 	"time"
 )
 
-var svc ServiceContext
+var svc = ServiceContext{}
 
 type ServiceContext struct {
-	Config config.Config
+	Config *config.Config
 	Redis  *redis.Redis
-	conn   sqlx.SqlConn
-	orm    *gorm.DB
 
 	AccountModel        model.AccountInfoModel
 	ArticleCommentModel model.ArticleCommentInfoModel
@@ -33,46 +30,50 @@ type ServiceContext struct {
 //
 //	@Description: 加载 svc
 //	@param c
-//	@param dir 项目路径
+//	@param path 项目路径
 //	@param file 配置文件名称
 //	@return *ServiceContext
-func NewServiceContext(c *config.Config, dir string, file string) error {
+func NewServiceContext(c *config.Config, path string, file string) error {
 	// 加载配置
-	if err := config.InitServConf(dir, file); err != nil {
+	if err := config.InitServConf(path, file); err != nil {
 		return err
+	} else {
+		svc.Config = c
 	}
 
-	// mysql client
-	foodipkg.InitConn(c.Mysql.DataSource)
-
-	// gorm mysql conn
-	svc.orm = foodipkg.GetDBConn()
-
-	// sqlx mysql
-	svc.conn = sqlx.NewMysql(c.Mysql.DataSource)
+	// 日志配置
+	logx.MustSetup(logx.LogConf{
+		ServiceName: c.Name,
+		Mode:        "file",
+		//TimeFormat:  "",
+		Path:       path,
+		Level:      "info",
+		KeepDays:   10,
+		MaxBackups: 10,
+		Rotation:   "daily",
+	})
+	logx.DisableStat() // disables the stat logs.
 
 	// redis client
-	red := redis.MustNewRedis(redis.RedisConf{
+	svc.Redis = redis.MustNewRedis(redis.RedisConf{
 		Host:        c.Redis.Host,
 		Type:        c.Redis.Type,
 		Pass:        c.Redis.Pass,
 		Tls:         c.Redis.Tls,
 		PingTimeout: 3 * time.Second,
 	})
-	svc = ServiceContext{
-		Config: *c,
-		Redis:  red,
-	}
 
-	svc.AccountModel = model.NewAccountInfoModel(svc.conn)
-	svc.ArticleCommentModel = model.NewArticleCommentInfoModel(svc.conn)
-	svc.SaveArticleModel = model.NewSaveArticleInfoModel(svc.conn)
-	svc.UpModel = model.NewUpInfoModel(svc.conn)
-	svc.UserInfoModel = model.NewUserInfoModel(svc.conn)
-	svc.UserLocationModel = model.NewUserLocationInfoModel(svc.conn)
-	svc.UserLoginModel = model.NewUserLoginInfoModel(svc.conn)
-	svc.ArticleModel = model.NewArticleInfoModel(svc.conn)
-	svc.UserWechatModel = model.NewUserWechatInfoModel(svc.conn)
+	// mysql
+	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	svc.AccountModel = model.NewAccountInfoModel(conn)
+	svc.ArticleCommentModel = model.NewArticleCommentInfoModel(conn)
+	svc.SaveArticleModel = model.NewSaveArticleInfoModel(conn)
+	svc.UpModel = model.NewUpInfoModel(conn)
+	svc.UserInfoModel = model.NewUserInfoModel(conn)
+	svc.UserLocationModel = model.NewUserLocationInfoModel(conn)
+	svc.UserLoginModel = model.NewUserLoginInfoModel(conn)
+	svc.ArticleModel = model.NewArticleInfoModel(conn)
+	svc.UserWechatModel = model.NewUserWechatInfoModel(conn)
 
 	return nil
 }

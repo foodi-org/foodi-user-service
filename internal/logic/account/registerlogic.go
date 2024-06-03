@@ -25,6 +25,5 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(in *foodi_user_service.RegisterRequest) (*foodi_user_service.RegisterReply, error) {
 	// todo: add your logic here and delete this line
-
 	return &foodi_user_service.RegisterReply{}, nil
 }
