@@ -1,4 +1,4 @@
-package userlogic
+package articlelogic
 
 import (
 	"context"
@@ -23,6 +23,7 @@ func NewCreateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 	}
 }
 
+// 新增文章
 func (l *CreateArticleLogic) CreateArticle(in *foodi_user_service.CreateArticleRequest) (*foodi_user_service.OKReply, error) {
 	// todo: add your logic here and delete this line
 

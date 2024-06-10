@@ -17,4 +17,5 @@ func main() {
 	_ = db.AutoMigrate(&modelgen.UserWechatInfo{})
 	_ = db.AutoMigrate(&modelgen.UpInfo{})
 	_ = db.AutoMigrate(&modelgen.SaveArticleInfo{})
+	_ = db.AutoMigrate(&modelgen.ArticleReadInfo{})
 }

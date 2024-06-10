@@ -14,6 +14,13 @@ enum UserCoup {
 enum ActionCoup {
   ADD = 0; // 新增类型。点赞或者收藏文章等操作类型
   Cancel = 1; // 取消类型。取消点赞或者取消收藏等操作类型
+  GET = 2; // 获取类型
+}
+
+// 资源类型
+enum ResourceCoup {
+  IMAGE = 0; // 图片
+  VIDEO = 2; // 视频
 }
 
 message OKReply {
@@ -53,6 +60,13 @@ message UserReply {
   int32 LV = 4;
 }
 
+// 更新用户头像
+message UserImageRequest {
+  int64 uid = 1;
+  string image = 2;
+}
+
+// 获取用户详情
 message UserDetailRequest {
   string Uid = 1;
 }
@@ -69,12 +83,28 @@ message UserDetailReply {
   int32 VIP = 9;
 }
 
+message Author {
+  int64 uid = 1; // 作者id
+  string name = 2; // 作者名称
+  string image = 3; // 作者头像
+}
+
+// 文章概览信息
+message ArticleInfo {
+  int64 id = 1; // 文章id
+  Author author = 2; // 文章作者信息
+  int64 upNum = 3; // 点赞数量
+  string title = 4; // 文章标题
+  string cover = 5; // 封面 url
+  ResourceCoup coverType = 6; // 封面类型
+}
+
 // 创建文章
 message CreateArticleRequest {
   int64 Uid = 1; // 用户id
   string Title = 2; // 标题
   string Content = 3; // 文章内容
-  string Type = 4; // 文章类型
+  ResourceCoup Type = 4; // 文章类型
   repeated string URL = 5; // 资源地址
   string Region = 6; // 显示的地域
   double Longitude = 7; // 显示定位的经度
@@ -92,7 +122,7 @@ message AddCommentRequest {
   bool IsAnonymous = 5; // 是否匿名
 }
 
-// 点赞
+// 点赞 & 取消点赞
 message UpRequest {
   int64 Uid = 1; // 发起点赞用户id
   int64 ArticleID = 2; // 文章id
@@ -100,24 +130,100 @@ message UpRequest {
   ActionCoup Action = 4; // up: 点赞; down: 取消点赞
 }
 
-// 文章收藏
-message SaveArticleRequest {
+// 文章收藏 & 取消收藏
+message CollectArticleRequest {
   int64 Uid = 1;
   int64 ArticleID = 2;
   ActionCoup Action = 3; // save: 收藏; cancel: 取消收藏
 }
 
-// 账号服务
+// 删除文章
+message DelArticleRequest {
+  int64 id = 1;
+}
+
+// 用户文章草稿列表
+message DraftListRequest {
+  int64 uid = 1;
+}
+
+// 用户文章草稿列表
+message Draft {
+  int64 id = 1;
+  string title = 2;
+  string time = 3;
+}
+
+// 用户文章草稿列表
+message DraftListReply {
+  repeated Draft list = 1;
+}
+
+// 获取文章列表
+message ArticleListRequest {
+  int64 start = 1;
+  repeated ArticleInfo list = 2;
+}
+
+message ArticleListReply {
+  int64 end = 1;
+  int64 size = 2;
+  repeated ArticleInfo list = 3;
+}
+
+// 文章历史
+message ReadHistoryRequest {
+  int64 uid = 1;
+  int64 aid = 2;
+  ActionCoup action = 3;
+  string datetime = 4; // 起始时间，只计算到日期不计算时间
+  int64 step = 5; // 时间步长
+}
+
+// 账号信息 service
 service Account {
+  // 获取token
   rpc Token(TokenRequest) returns (TokenReply);
+
+  // 普通用户注册
   rpc Register(RegisterRequest) returns (RegisterReply);
 }
 
+// 用户信息 service
 service User {
+
+  // 获取用户基础信息
   rpc BaseInfo(UserRequest) returns(UserReply);
+
+  // 获取用户详情
   rpc DetailInfo(UserDetailRequest) returns (UserDetailReply);
+
+  // 更新用户头像
+  rpc UserImage(UserImageRequest) returns (OKReply);
+}
+
+// 文章与评论 service
+service Article {
+  // 新增文章
   rpc CreateArticle(CreateArticleRequest) returns (OKReply);
+
+  // 评论文章或者回复评论
   rpc AddComment(AddCommentRequest) returns (OKReply);
+
+  // 点赞文章或者评论
   rpc Up(UpRequest) returns (OKReply);
-  rpc SaveArticle(SaveArticleRequest) returns (OKReply);
+
+  // 收藏文章列表 & 取消收藏
+  rpc CollectArticle(CollectArticleRequest) returns (OKReply);
+
+  // 删除文章
+  rpc DelArticle(DelArticleRequest) returns (OKReply);
+
+  // 获取用户草稿文章列表
+  rpc DraftList(DraftListRequest) returns (DraftListReply);
+
+  // 获取用户最近一周的文章访问历史记录
+  rpc ReadHistory(ReadHistoryRequest) returns (ArticleListReply);
+
+//  rpc ArticleList()
 }

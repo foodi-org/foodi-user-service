@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/foodi-org/foodi-user-service/model/modelType/bo"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
@@ -26,6 +27,11 @@ type (
 		FindOne(ctx context.Context, id int64) (*UserInfo, error)
 		Update(ctx context.Context, data *UserInfo) error
 		Delete(ctx context.Context, id int64) error
+
+		/*UpdateImage
+		@Description: 更新用户头像
+		*/
+		UpdateImage(ctx context.Context, data *bo.UpdateImageBO) error
 	}
 
 	defaultUserInfoModel struct {
@@ -91,6 +97,17 @@ func (m *defaultUserInfoModel) Insert(ctx context.Context, data *UserInfo) (sql.
 func (m *defaultUserInfoModel) Update(ctx context.Context, data *UserInfo) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userInfoRowsWithPlaceHolder)
 	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.Uid, data.Aid, data.Name, data.CardType, data.CardId, data.Gender, data.Age, data.Birthday, data.Region, data.WeChatId, data.Lv, data.Vip, data.NikeName, data.Image, data.Id)
+	return err
+}
+
+// UpdateImage
+//
+//	@Description: 更新用户头像
+//	@param data
+//	@return error
+func (m *defaultUserInfoModel) UpdateImage(ctx context.Context, data *bo.UpdateImageBO) error {
+	query := fmt.Sprintf("update %s set `image` = ? where `id` = ? and `deleted_at` is null", m.table, data.Image, data.Uid)
+	_, err := m.conn.ExecCtx(ctx, query)
 	return err
 }
 

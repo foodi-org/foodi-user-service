@@ -6,7 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/foodi-org/foodi-user-service/model/bo"
+	"github.com/foodi-org/foodi-user-service/model/modelType/bo"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"

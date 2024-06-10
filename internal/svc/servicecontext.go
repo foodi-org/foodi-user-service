@@ -24,6 +24,7 @@ type ServiceContext struct {
 	UserLoginModel      model.UserLoginInfoModel
 	ArticleModel        model.ArticleInfoModel
 	UserWechatModel     model.UserWechatInfoModel
+	ArticleReadModel    model.ArticleReadInfoModel
 }
 
 // NewServiceContext
@@ -74,6 +75,7 @@ func NewServiceContext(c *config.Config, path string, file string) error {
 	svc.UserLoginModel = model.NewUserLoginInfoModel(conn)
 	svc.ArticleModel = model.NewArticleInfoModel(conn)
 	svc.UserWechatModel = model.NewUserWechatInfoModel(conn)
+	svc.ArticleReadModel = model.NewArticleReadInfoModel(conn)
 
 	return nil
 }

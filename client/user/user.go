@@ -13,27 +13,37 @@ import (
 )
 
 type (
-	AddCommentRequest    = foodi_user_service.AddCommentRequest
-	CreateArticleRequest = foodi_user_service.CreateArticleRequest
-	OKReply              = foodi_user_service.OKReply
-	RegisterReply        = foodi_user_service.RegisterReply
-	RegisterRequest      = foodi_user_service.RegisterRequest
-	SaveArticleRequest   = foodi_user_service.SaveArticleRequest
-	TokenReply           = foodi_user_service.TokenReply
-	TokenRequest         = foodi_user_service.TokenRequest
-	UpRequest            = foodi_user_service.UpRequest
-	UserDetailReply      = foodi_user_service.UserDetailReply
-	UserDetailRequest    = foodi_user_service.UserDetailRequest
-	UserReply            = foodi_user_service.UserReply
-	UserRequest          = foodi_user_service.UserRequest
+	AddCommentRequest     = foodi_user_service.AddCommentRequest
+	ArticleInfo           = foodi_user_service.ArticleInfo
+	ArticleListReply      = foodi_user_service.ArticleListReply
+	ArticleListRequest    = foodi_user_service.ArticleListRequest
+	Author                = foodi_user_service.Author
+	CollectArticleRequest = foodi_user_service.CollectArticleRequest
+	CreateArticleRequest  = foodi_user_service.CreateArticleRequest
+	DelArticleRequest     = foodi_user_service.DelArticleRequest
+	Draft                 = foodi_user_service.Draft
+	DraftListReply        = foodi_user_service.DraftListReply
+	DraftListRequest      = foodi_user_service.DraftListRequest
+	OKReply               = foodi_user_service.OKReply
+	ReadHistoryRequest    = foodi_user_service.ReadHistoryRequest
+	RegisterReply         = foodi_user_service.RegisterReply
+	RegisterRequest       = foodi_user_service.RegisterRequest
+	TokenReply            = foodi_user_service.TokenReply
+	TokenRequest          = foodi_user_service.TokenRequest
+	UpRequest             = foodi_user_service.UpRequest
+	UserDetailReply       = foodi_user_service.UserDetailReply
+	UserDetailRequest     = foodi_user_service.UserDetailRequest
+	UserImageRequest      = foodi_user_service.UserImageRequest
+	UserReply             = foodi_user_service.UserReply
+	UserRequest           = foodi_user_service.UserRequest
 
 	User interface {
+		// 获取用户基础信息
 		BaseInfo(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserReply, error)
+		// 获取用户详情
 		DetailInfo(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error)
-		CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
-		AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error)
-		Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error)
-		SaveArticle(ctx context.Context, in *SaveArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
+		// 更新用户头像
+		UserImage(ctx context.Context, in *UserImageRequest, opts ...grpc.CallOption) (*OKReply, error)
 	}
 
 	defaultUser struct {
@@ -47,32 +57,20 @@ func NewUser(cli zrpc.Client) User {
 	}
 }
 
+// 获取用户基础信息
 func (m *defaultUser) BaseInfo(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserReply, error) {
 	client := foodi_user_service.NewUserClient(m.cli.Conn())
 	return client.BaseInfo(ctx, in, opts...)
 }
 
+// 获取用户详情
 func (m *defaultUser) DetailInfo(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error) {
 	client := foodi_user_service.NewUserClient(m.cli.Conn())
 	return client.DetailInfo(ctx, in, opts...)
 }
 
-func (m *defaultUser) CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
+// 更新用户头像
+func (m *defaultUser) UserImage(ctx context.Context, in *UserImageRequest, opts ...grpc.CallOption) (*OKReply, error) {
 	client := foodi_user_service.NewUserClient(m.cli.Conn())
-	return client.CreateArticle(ctx, in, opts...)
-}
-
-func (m *defaultUser) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error) {
-	client := foodi_user_service.NewUserClient(m.cli.Conn())
-	return client.AddComment(ctx, in, opts...)
-}
-
-func (m *defaultUser) Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error) {
-	client := foodi_user_service.NewUserClient(m.cli.Conn())
-	return client.Up(ctx, in, opts...)
-}
-
-func (m *defaultUser) SaveArticle(ctx context.Context, in *SaveArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
-	client := foodi_user_service.NewUserClient(m.cli.Conn())
-	return client.SaveArticle(ctx, in, opts...)
+	return client.UserImage(ctx, in, opts...)
 }

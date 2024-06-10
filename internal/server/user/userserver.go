@@ -22,32 +22,20 @@ func NewUserServer(svcCtx *svc.ServiceContext) *UserServer {
 	}
 }
 
+// 获取用户基础信息
 func (s *UserServer) BaseInfo(ctx context.Context, in *foodi_user_service.UserRequest) (*foodi_user_service.UserReply, error) {
 	l := userlogic.NewBaseInfoLogic(ctx, s.svcCtx)
 	return l.BaseInfo(in)
 }
 
+// 获取用户详情
 func (s *UserServer) DetailInfo(ctx context.Context, in *foodi_user_service.UserDetailRequest) (*foodi_user_service.UserDetailReply, error) {
 	l := userlogic.NewDetailInfoLogic(ctx, s.svcCtx)
 	return l.DetailInfo(in)
 }
 
-func (s *UserServer) CreateArticle(ctx context.Context, in *foodi_user_service.CreateArticleRequest) (*foodi_user_service.OKReply, error) {
-	l := userlogic.NewCreateArticleLogic(ctx, s.svcCtx)
-	return l.CreateArticle(in)
-}
-
-func (s *UserServer) AddComment(ctx context.Context, in *foodi_user_service.AddCommentRequest) (*foodi_user_service.OKReply, error) {
-	l := userlogic.NewAddCommentLogic(ctx, s.svcCtx)
-	return l.AddComment(in)
-}
-
-func (s *UserServer) Up(ctx context.Context, in *foodi_user_service.UpRequest) (*foodi_user_service.OKReply, error) {
-	l := userlogic.NewUpLogic(ctx, s.svcCtx)
-	return l.Up(in)
-}
-
-func (s *UserServer) SaveArticle(ctx context.Context, in *foodi_user_service.SaveArticleRequest) (*foodi_user_service.OKReply, error) {
-	l := userlogic.NewSaveArticleLogic(ctx, s.svcCtx)
-	return l.SaveArticle(in)
+// 更新用户头像
+func (s *UserServer) UserImage(ctx context.Context, in *foodi_user_service.UserImageRequest) (*foodi_user_service.OKReply, error) {
+	l := userlogic.NewUserImageLogic(ctx, s.svcCtx)
+	return l.UserImage(in)
 }

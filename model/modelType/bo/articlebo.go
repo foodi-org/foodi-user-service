@@ -5,5 +5,5 @@ type ArticleBo struct {
 
 	ArticleID int64
 
-	Action string
+	Type string
 }

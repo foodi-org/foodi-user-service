@@ -1,4 +1,4 @@
-package userlogic
+package articlelogic
 
 import (
 	"context"
@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type DetailInfoLogic struct {
+type AddCommentLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewDetailInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailInfoLogic {
-	return &DetailInfoLogic{
+func NewAddCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCommentLogic {
+	return &AddCommentLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 获取用户详情
-func (l *DetailInfoLogic) DetailInfo(in *foodi_user_service.UserDetailRequest) (*foodi_user_service.UserDetailReply, error) {
+// 评论文章或者回复评论
+func (l *AddCommentLogic) AddComment(in *foodi_user_service.AddCommentRequest) (*foodi_user_service.OKReply, error) {
 	// todo: add your logic here and delete this line
 
-	return &foodi_user_service.UserDetailReply{}, nil
+	return &foodi_user_service.OKReply{}, nil
 }

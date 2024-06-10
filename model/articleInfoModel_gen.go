@@ -6,7 +6,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/foodi-org/foodi-user-service/model/modelType"
 	"strings"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -26,6 +28,20 @@ type (
 		FindOne(ctx context.Context, id int64) (*ArticleInfo, error)
 		Update(ctx context.Context, data *ArticleInfo) error
 		Delete(ctx context.Context, id int64) error
+
+		/*Disable
+		@Description: 删除文章
+		@param id 文章id
+		@param uid 用户id
+		@return error
+		*/
+		Disable(ctx context.Context, id int64, uid int64) error
+
+		/*DraftList
+		@Description: 获取用户保存的文稿
+		@param uid 用户id
+		*/
+		DraftList(ctx context.Context, uid int64) ([]*modelType.DraftArticle, error)
 	}
 
 	defaultArticleInfoModel struct {
@@ -92,6 +108,28 @@ func (m *defaultArticleInfoModel) Update(ctx context.Context, data *ArticleInfo)
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, articleInfoRowsWithPlaceHolder)
 	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.Uid, data.Published, data.PublishedAt, data.ArticleType, data.Title, data.Video, data.ImageUrl, data.Content, data.Up, data.Save, data.Region, data.Location, data.Merchant, data.Cover, data.Id)
 	return err
+}
+
+// Disable
+//
+//	@Description: 删除文章
+//	@param id 文章id
+//	@param uid 用户id
+//	@return error
+func (m *defaultArticleInfoModel) Disable(ctx context.Context, id int64, uid int64) error {
+	query := fmt.Sprintf("update %s set `deleted_at` = ? where `id` = ? and `uid` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, time.Now(), id, uid)
+	return err
+}
+
+// 获取用户保存的文稿
+func (m *defaultArticleInfoModel) DraftList(ctx context.Context, uid int64) ([]*modelType.DraftArticle, error) {
+	var res []*modelType.DraftArticle
+	query := fmt.Sprintf("select `id`, `created_at`, `updated_at`, `title` from %s where `uid` = ? and `published_at` is null and `deleted_at` is null", m.table)
+	if err := m.conn.QueryRowsCtx(ctx, &res, query, uid); err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (m *defaultArticleInfoModel) tableName() string {

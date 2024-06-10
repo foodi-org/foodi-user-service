@@ -27,7 +27,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountClient interface {
+	// 获取token
 	Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error)
+	// 普通用户注册
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 }
 
@@ -61,7 +63,9 @@ func (c *accountClient) Register(ctx context.Context, in *RegisterRequest, opts 
 // All implementations must embed UnimplementedAccountServer
 // for forward compatibility
 type AccountServer interface {
+	// 获取token
 	Token(context.Context, *TokenRequest) (*TokenReply, error)
+	// 普通用户注册
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	mustEmbedUnimplementedAccountServer()
 }
@@ -146,24 +150,21 @@ var Account_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	User_BaseInfo_FullMethodName      = "/foodiUserService.User/BaseInfo"
-	User_DetailInfo_FullMethodName    = "/foodiUserService.User/DetailInfo"
-	User_CreateArticle_FullMethodName = "/foodiUserService.User/CreateArticle"
-	User_AddComment_FullMethodName    = "/foodiUserService.User/AddComment"
-	User_Up_FullMethodName            = "/foodiUserService.User/Up"
-	User_SaveArticle_FullMethodName   = "/foodiUserService.User/SaveArticle"
+	User_BaseInfo_FullMethodName   = "/foodiUserService.User/BaseInfo"
+	User_DetailInfo_FullMethodName = "/foodiUserService.User/DetailInfo"
+	User_UserImage_FullMethodName  = "/foodiUserService.User/UserImage"
 )
 
 // UserClient is the client API for User service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
+	// 获取用户基础信息
 	BaseInfo(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserReply, error)
+	// 获取用户详情
 	DetailInfo(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error)
-	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
-	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error)
-	Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error)
-	SaveArticle(ctx context.Context, in *SaveArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
+	// 更新用户头像
+	UserImage(ctx context.Context, in *UserImageRequest, opts ...grpc.CallOption) (*OKReply, error)
 }
 
 type userClient struct {
@@ -192,36 +193,9 @@ func (c *userClient) DetailInfo(ctx context.Context, in *UserDetailRequest, opts
 	return out, nil
 }
 
-func (c *userClient) CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
+func (c *userClient) UserImage(ctx context.Context, in *UserImageRequest, opts ...grpc.CallOption) (*OKReply, error) {
 	out := new(OKReply)
-	err := c.cc.Invoke(ctx, User_CreateArticle_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error) {
-	out := new(OKReply)
-	err := c.cc.Invoke(ctx, User_AddComment_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error) {
-	out := new(OKReply)
-	err := c.cc.Invoke(ctx, User_Up_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) SaveArticle(ctx context.Context, in *SaveArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
-	out := new(OKReply)
-	err := c.cc.Invoke(ctx, User_SaveArticle_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, User_UserImage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -232,12 +206,12 @@ func (c *userClient) SaveArticle(ctx context.Context, in *SaveArticleRequest, op
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
 type UserServer interface {
+	// 获取用户基础信息
 	BaseInfo(context.Context, *UserRequest) (*UserReply, error)
+	// 获取用户详情
 	DetailInfo(context.Context, *UserDetailRequest) (*UserDetailReply, error)
-	CreateArticle(context.Context, *CreateArticleRequest) (*OKReply, error)
-	AddComment(context.Context, *AddCommentRequest) (*OKReply, error)
-	Up(context.Context, *UpRequest) (*OKReply, error)
-	SaveArticle(context.Context, *SaveArticleRequest) (*OKReply, error)
+	// 更新用户头像
+	UserImage(context.Context, *UserImageRequest) (*OKReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -251,17 +225,8 @@ func (UnimplementedUserServer) BaseInfo(context.Context, *UserRequest) (*UserRep
 func (UnimplementedUserServer) DetailInfo(context.Context, *UserDetailRequest) (*UserDetailReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DetailInfo not implemented")
 }
-func (UnimplementedUserServer) CreateArticle(context.Context, *CreateArticleRequest) (*OKReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateArticle not implemented")
-}
-func (UnimplementedUserServer) AddComment(context.Context, *AddCommentRequest) (*OKReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
-}
-func (UnimplementedUserServer) Up(context.Context, *UpRequest) (*OKReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Up not implemented")
-}
-func (UnimplementedUserServer) SaveArticle(context.Context, *SaveArticleRequest) (*OKReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveArticle not implemented")
+func (UnimplementedUserServer) UserImage(context.Context, *UserImageRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserImage not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -312,74 +277,20 @@ func _User_DetailInfo_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_CreateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateArticleRequest)
+func _User_UserImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).CreateArticle(ctx, in)
+		return srv.(UserServer).UserImage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: User_CreateArticle_FullMethodName,
+		FullMethod: User_UserImage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).CreateArticle(ctx, req.(*CreateArticleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_AddComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddCommentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).AddComment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_AddComment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).AddComment(ctx, req.(*AddCommentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_Up_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).Up(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_Up_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).Up(ctx, req.(*UpRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_SaveArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SaveArticleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).SaveArticle(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_SaveArticle_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).SaveArticle(ctx, req.(*SaveArticleRequest))
+		return srv.(UserServer).UserImage(ctx, req.(*UserImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -400,20 +311,334 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_DetailInfo_Handler,
 		},
 		{
+			MethodName: "UserImage",
+			Handler:    _User_UserImage_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "foodiUserService.proto",
+}
+
+const (
+	Article_CreateArticle_FullMethodName  = "/foodiUserService.Article/CreateArticle"
+	Article_AddComment_FullMethodName     = "/foodiUserService.Article/AddComment"
+	Article_Up_FullMethodName             = "/foodiUserService.Article/Up"
+	Article_CollectArticle_FullMethodName = "/foodiUserService.Article/CollectArticle"
+	Article_DelArticle_FullMethodName     = "/foodiUserService.Article/DelArticle"
+	Article_DraftList_FullMethodName      = "/foodiUserService.Article/DraftList"
+	Article_ReadHistory_FullMethodName    = "/foodiUserService.Article/ReadHistory"
+)
+
+// ArticleClient is the client API for Article service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ArticleClient interface {
+	// 新增文章
+	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
+	// 评论文章或者回复评论
+	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error)
+	// 点赞文章或者评论
+	Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error)
+	// 收藏文章列表 & 取消收藏
+	CollectArticle(ctx context.Context, in *CollectArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
+	// 删除文章
+	DelArticle(ctx context.Context, in *DelArticleRequest, opts ...grpc.CallOption) (*OKReply, error)
+	// 获取用户草稿文章列表
+	DraftList(ctx context.Context, in *DraftListRequest, opts ...grpc.CallOption) (*DraftListReply, error)
+	// 获取用户最近一周的文章访问历史记录
+	ReadHistory(ctx context.Context, in *ReadHistoryRequest, opts ...grpc.CallOption) (*ArticleListReply, error)
+}
+
+type articleClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewArticleClient(cc grpc.ClientConnInterface) ArticleClient {
+	return &articleClient{cc}
+}
+
+func (c *articleClient) CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, Article_CreateArticle_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, Article_AddComment_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleClient) Up(ctx context.Context, in *UpRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, Article_Up_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleClient) CollectArticle(ctx context.Context, in *CollectArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, Article_CollectArticle_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleClient) DelArticle(ctx context.Context, in *DelArticleRequest, opts ...grpc.CallOption) (*OKReply, error) {
+	out := new(OKReply)
+	err := c.cc.Invoke(ctx, Article_DelArticle_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleClient) DraftList(ctx context.Context, in *DraftListRequest, opts ...grpc.CallOption) (*DraftListReply, error) {
+	out := new(DraftListReply)
+	err := c.cc.Invoke(ctx, Article_DraftList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleClient) ReadHistory(ctx context.Context, in *ReadHistoryRequest, opts ...grpc.CallOption) (*ArticleListReply, error) {
+	out := new(ArticleListReply)
+	err := c.cc.Invoke(ctx, Article_ReadHistory_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ArticleServer is the server API for Article service.
+// All implementations must embed UnimplementedArticleServer
+// for forward compatibility
+type ArticleServer interface {
+	// 新增文章
+	CreateArticle(context.Context, *CreateArticleRequest) (*OKReply, error)
+	// 评论文章或者回复评论
+	AddComment(context.Context, *AddCommentRequest) (*OKReply, error)
+	// 点赞文章或者评论
+	Up(context.Context, *UpRequest) (*OKReply, error)
+	// 收藏文章列表 & 取消收藏
+	CollectArticle(context.Context, *CollectArticleRequest) (*OKReply, error)
+	// 删除文章
+	DelArticle(context.Context, *DelArticleRequest) (*OKReply, error)
+	// 获取用户草稿文章列表
+	DraftList(context.Context, *DraftListRequest) (*DraftListReply, error)
+	// 获取用户最近一周的文章访问历史记录
+	ReadHistory(context.Context, *ReadHistoryRequest) (*ArticleListReply, error)
+	mustEmbedUnimplementedArticleServer()
+}
+
+// UnimplementedArticleServer must be embedded to have forward compatible implementations.
+type UnimplementedArticleServer struct {
+}
+
+func (UnimplementedArticleServer) CreateArticle(context.Context, *CreateArticleRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateArticle not implemented")
+}
+func (UnimplementedArticleServer) AddComment(context.Context, *AddCommentRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
+}
+func (UnimplementedArticleServer) Up(context.Context, *UpRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Up not implemented")
+}
+func (UnimplementedArticleServer) CollectArticle(context.Context, *CollectArticleRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectArticle not implemented")
+}
+func (UnimplementedArticleServer) DelArticle(context.Context, *DelArticleRequest) (*OKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelArticle not implemented")
+}
+func (UnimplementedArticleServer) DraftList(context.Context, *DraftListRequest) (*DraftListReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DraftList not implemented")
+}
+func (UnimplementedArticleServer) ReadHistory(context.Context, *ReadHistoryRequest) (*ArticleListReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadHistory not implemented")
+}
+func (UnimplementedArticleServer) mustEmbedUnimplementedArticleServer() {}
+
+// UnsafeArticleServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ArticleServer will
+// result in compilation errors.
+type UnsafeArticleServer interface {
+	mustEmbedUnimplementedArticleServer()
+}
+
+func RegisterArticleServer(s grpc.ServiceRegistrar, srv ArticleServer) {
+	s.RegisterService(&Article_ServiceDesc, srv)
+}
+
+func _Article_CreateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).CreateArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Article_CreateArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).CreateArticle(ctx, req.(*CreateArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Article_AddComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).AddComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Article_AddComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).AddComment(ctx, req.(*AddCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Article_Up_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).Up(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Article_Up_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).Up(ctx, req.(*UpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Article_CollectArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).CollectArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Article_CollectArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).CollectArticle(ctx, req.(*CollectArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Article_DelArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).DelArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Article_DelArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).DelArticle(ctx, req.(*DelArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Article_DraftList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DraftListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).DraftList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Article_DraftList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).DraftList(ctx, req.(*DraftListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Article_ReadHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServer).ReadHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Article_ReadHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServer).ReadHistory(ctx, req.(*ReadHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Article_ServiceDesc is the grpc.ServiceDesc for Article service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Article_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "foodiUserService.Article",
+	HandlerType: (*ArticleServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
 			MethodName: "CreateArticle",
-			Handler:    _User_CreateArticle_Handler,
+			Handler:    _Article_CreateArticle_Handler,
 		},
 		{
 			MethodName: "AddComment",
-			Handler:    _User_AddComment_Handler,
+			Handler:    _Article_AddComment_Handler,
 		},
 		{
 			MethodName: "Up",
-			Handler:    _User_Up_Handler,
+			Handler:    _Article_Up_Handler,
 		},
 		{
-			MethodName: "SaveArticle",
-			Handler:    _User_SaveArticle_Handler,
+			MethodName: "CollectArticle",
+			Handler:    _Article_CollectArticle_Handler,
+		},
+		{
+			MethodName: "DelArticle",
+			Handler:    _Article_DelArticle_Handler,
+		},
+		{
+			MethodName: "DraftList",
+			Handler:    _Article_DraftList_Handler,
+		},
+		{
+			MethodName: "ReadHistory",
+			Handler:    _Article_ReadHistory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
