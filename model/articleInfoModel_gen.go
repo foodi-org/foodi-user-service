@@ -42,6 +42,14 @@ type (
 		@param uid 用户id
 		*/
 		DraftList(ctx context.Context, uid int64) ([]*modelType.DraftArticle, error)
+
+		/*ListByIDS
+		@Description: 基于id批量查询文章列表
+		@param id id列表
+		@return []*modelType.DraftArticle
+		@return error
+		*/
+		ListByIDS(ctx context.Context, id []int64) ([]*ArticleInfo, error)
 	}
 
 	defaultArticleInfoModel struct {
@@ -127,6 +135,21 @@ func (m *defaultArticleInfoModel) DraftList(ctx context.Context, uid int64) ([]*
 	var res []*modelType.DraftArticle
 	query := fmt.Sprintf("select `id`, `created_at`, `updated_at`, `title` from %s where `uid` = ? and `published_at` is null and `deleted_at` is null", m.table)
 	if err := m.conn.QueryRowsCtx(ctx, &res, query, uid); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// ListByIDS
+//
+//	@Description: 基于id批量查询文章列表
+//	@param id id列表
+//	@return []*modelType.DraftArticle
+//	@return error
+func (m *defaultArticleInfoModel) ListByIDS(ctx context.Context, id []int64) ([]*ArticleInfo, error) {
+	var res []*ArticleInfo
+	query := fmt.Sprintf("select * from %s where `id` in (?)", m.table)
+	if err := m.conn.QueryRowsCtx(ctx, &res, query, id, m.table); err != nil {
 		return nil, err
 	}
 	return res, nil

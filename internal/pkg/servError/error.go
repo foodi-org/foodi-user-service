@@ -2,16 +2,6 @@ package servError
 
 import "fmt"
 
-const (
-	COMMONCODE = 111000
-	UNKONWCODE = 111099
-)
-
-const (
-	COMMONMSG = "user service error"
-	UNKNOWMSG = "unknow service error"
-)
-
 type (
 	GRPCError struct {
 		Code    int    `json:"code"`
@@ -24,13 +14,17 @@ func (e *GRPCError) Error() string {
 }
 
 func (e *GRPCError) CommonErr() {
-	e.Code = COMMONCODE
-	e.Message = COMMONMSG
+	e.Code = COMMON
+	e.Message = msg[UNKONW]
 }
 
 func (e *GRPCError) UnKnowErr() {
-	e.Code = UNKONWCODE
-	e.Message = UNKNOWMSG
+	e.Code = UNKONW
+	e.Message = msg[UNKONW]
+}
+
+func GRPCErr() error {
+	return &GRPCError{}
 }
 
 func NewGRPCError(code int, msg string) error {

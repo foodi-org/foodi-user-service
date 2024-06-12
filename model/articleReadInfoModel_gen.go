@@ -97,7 +97,7 @@ func (m *defaultArticleReadInfoModel) Update(ctx context.Context, data *ArticleR
 //	@return []int64 文章id列表
 //	@return error
 func (m *defaultArticleReadInfoModel) AidsAfterDate(ctx context.Context, uid int64, datetime string) ([]int64, error) {
-	query := fmt.Sprintf("select `aid` from (select * from %s where `uid` = ?;) where `created_at` > ?", m.table)
+	query := fmt.Sprintf("select `aid` from (select * from %s where `uid` = ?;) where `created_at` > ? limit 20 order by `created_at` DESC", m.table)
 	var resp []int64
 	if err := m.conn.QueryRowCtx(ctx, &resp, query, uid, datetime); err != nil {
 		return nil, err

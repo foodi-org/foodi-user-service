@@ -30,7 +30,6 @@ func NewCollectArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Co
 
 // 收藏文章列表 & 取消收藏
 func (l *CollectArticleLogic) CollectArticle(in *foodi_user_service.CollectArticleRequest) (*foodi_user_service.OKReply, error) {
-	var err = servError.GRPCErrorDO()
 	// 参数校验
 	if in.GetUid() == 0 || in.GetArticleID() == 0 {
 		return nil, errors.New("invalid parameter")
@@ -65,6 +64,6 @@ func (l *CollectArticleLogic) CollectArticle(in *foodi_user_service.CollectArtic
 		}
 		return &foodi_user_service.OKReply{Ok: true}, nil
 	default:
-		return nil, servError.NewGRPCError(servError.ActionErrCode, servError.ActionErrMsg)
+		return nil, servError.NewGRPCError(servError.InvalidAction, servError.Msg(servError.InvalidAction))
 	}
 }

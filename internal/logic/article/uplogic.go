@@ -69,6 +69,6 @@ func (l *UpLogic) Up(in *foodi_user_service.UpRequest) (*foodi_user_service.OKRe
 		}
 		return &foodi_user_service.OKReply{Ok: true}, nil
 	default:
-		return nil, servError.NewGRPCError(servError.ActionErrCode, servError.ActionErrMsg)
+		return nil, servError.NewGRPCError(servError.InvalidAction, servError.Msg(servError.InvalidAction))
 	}
 }
