@@ -160,16 +160,24 @@ message DraftListReply {
   repeated Draft list = 1;
 }
 
-// 获取文章列表
+// 下拉获取文章列表
 message ArticleListRequest {
-  int64 start = 1;
-  repeated ArticleInfo list = 2;
+  int64 start = 1; // 起始文章索引
+  int64 end = 2; // 结束文章索引
+  int64 num = 3; // 页码
+  int64 size = 4; // 每页数量
 }
 
+// 刷新文章列表
+message ArticleRefreshRequest {}
+
 message ArticleListReply {
-  int64 end = 1;
-  int64 size = 2;
-  repeated ArticleInfo list = 3;
+  int64 start = 1;
+  int64 end = 2;
+  int64 num = 3; // 当前页码
+  int64 size = 4; // 每页数量
+  int64 total = 5; // 总页数
+  repeated ArticleInfo list = 6;
 }
 
 // 文章历史
@@ -226,5 +234,9 @@ service Article {
   // 获取用户最近一周的文章访问历史记录
   rpc ReadHistory(ReadHistoryRequest) returns (ArticleListReply);
 
-//  rpc ArticleList()
+  // 用户下滑继续获取文章列表
+  rpc ArticleList(ArticleListRequest) returns (ArticleListReply);
+
+  // 用户下拉刷新文章列表
+  rpc ArticleRefresh(ArticleRefreshRequest) returns (ArticleListReply);
 }
