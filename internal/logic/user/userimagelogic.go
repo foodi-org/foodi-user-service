@@ -24,7 +24,7 @@ func NewUserImageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserIma
 	}
 }
 
-// 更新用户头像
+// UserImage 更新用户头像
 func (l *UserImageLogic) UserImage(in *foodi_user_service.UserImageRequest) (*foodi_user_service.OKReply, error) {
 
 	return &foodi_user_service.OKReply{

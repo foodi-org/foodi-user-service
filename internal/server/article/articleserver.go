@@ -63,3 +63,15 @@ func (s *ArticleServer) ReadHistory(ctx context.Context, in *foodi_user_service.
 	l := articlelogic.NewReadHistoryLogic(ctx, s.svcCtx)
 	return l.ReadHistory(in)
 }
+
+// 用户下滑继续获取文章列表
+func (s *ArticleServer) ArticleList(ctx context.Context, in *foodi_user_service.ArticleListRequest) (*foodi_user_service.ArticleListReply, error) {
+	l := articlelogic.NewArticleListLogic(ctx, s.svcCtx)
+	return l.ArticleList(in)
+}
+
+// 用户下拉刷新文章列表
+func (s *ArticleServer) ArticleRefresh(ctx context.Context, in *foodi_user_service.ArticleRefreshRequest) (*foodi_user_service.ArticleListReply, error) {
+	l := articlelogic.NewArticleRefreshLogic(ctx, s.svcCtx)
+	return l.ArticleRefresh(in)
+}

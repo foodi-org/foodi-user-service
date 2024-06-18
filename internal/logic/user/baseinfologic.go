@@ -23,8 +23,16 @@ func NewBaseInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BaseInfo
 	}
 }
 
+// BaseInfo 获取用户基础信息
 func (l *BaseInfoLogic) BaseInfo(in *foodi_user_service.UserRequest) (*foodi_user_service.UserReply, error) {
-	// todo: add your logic here and delete this line
-
-	return &foodi_user_service.UserReply{}, nil
+	if user, err := l.svcCtx.UserInfoModel.FindByUID(l.ctx, in.GetUid()); err != nil {
+		return nil, err
+	} else {
+		return &foodi_user_service.UserReply{
+			Name:     user.Name.String,
+			NikeName: user.NikeName.String,
+			Image:    user.Image.String,
+			LV:       int32(user.Lv.Int64),
+		}, nil
+	}
 }

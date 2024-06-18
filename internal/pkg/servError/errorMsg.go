@@ -7,11 +7,11 @@ func Msg(code int) string {
 }
 
 func init() {
-	msg[COMMON] = "common error"
-	msg[UNKONW] = "unkonw error"
+	msg[Common] = "common error"
+	msg[UNKNOWN] = "unknown error"
 
 	msg[InvalidParam] = "invalid param"
 	msg[InvalidAction] = "invalid action"
 
-	msg[ARTICLE_NOT_FOUND] = "article not found"
+	msg[ArticleNotFound] = "article not found"
 }

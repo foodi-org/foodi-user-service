@@ -17,6 +17,7 @@ type (
 	ArticleInfo           = foodi_user_service.ArticleInfo
 	ArticleListReply      = foodi_user_service.ArticleListReply
 	ArticleListRequest    = foodi_user_service.ArticleListRequest
+	ArticleRefreshRequest = foodi_user_service.ArticleRefreshRequest
 	Author                = foodi_user_service.Author
 	CollectArticleRequest = foodi_user_service.CollectArticleRequest
 	CreateArticleRequest  = foodi_user_service.CreateArticleRequest
@@ -52,6 +53,10 @@ type (
 		DraftList(ctx context.Context, in *DraftListRequest, opts ...grpc.CallOption) (*DraftListReply, error)
 		// 获取用户最近一周的文章访问历史记录
 		ReadHistory(ctx context.Context, in *ReadHistoryRequest, opts ...grpc.CallOption) (*ArticleListReply, error)
+		// 用户下滑继续获取文章列表
+		ArticleList(ctx context.Context, in *ArticleListRequest, opts ...grpc.CallOption) (*ArticleListReply, error)
+		// 用户下拉刷新文章列表
+		ArticleRefresh(ctx context.Context, in *ArticleRefreshRequest, opts ...grpc.CallOption) (*ArticleListReply, error)
 	}
 
 	defaultArticle struct {
@@ -105,4 +110,16 @@ func (m *defaultArticle) DraftList(ctx context.Context, in *DraftListRequest, op
 func (m *defaultArticle) ReadHistory(ctx context.Context, in *ReadHistoryRequest, opts ...grpc.CallOption) (*ArticleListReply, error) {
 	client := foodi_user_service.NewArticleClient(m.cli.Conn())
 	return client.ReadHistory(ctx, in, opts...)
+}
+
+// 用户下滑继续获取文章列表
+func (m *defaultArticle) ArticleList(ctx context.Context, in *ArticleListRequest, opts ...grpc.CallOption) (*ArticleListReply, error) {
+	client := foodi_user_service.NewArticleClient(m.cli.Conn())
+	return client.ArticleList(ctx, in, opts...)
+}
+
+// 用户下拉刷新文章列表
+func (m *defaultArticle) ArticleRefresh(ctx context.Context, in *ArticleRefreshRequest, opts ...grpc.CallOption) (*ArticleListReply, error) {
+	client := foodi_user_service.NewArticleClient(m.cli.Conn())
+	return client.ArticleRefresh(ctx, in, opts...)
 }

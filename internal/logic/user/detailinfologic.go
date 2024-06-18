@@ -23,9 +23,21 @@ func NewDetailInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Detail
 	}
 }
 
-// 获取用户详情
+// DetailInfo 获取用户详情
 func (l *DetailInfoLogic) DetailInfo(in *foodi_user_service.UserDetailRequest) (*foodi_user_service.UserDetailReply, error) {
-	// todo: add your logic here and delete this line
-
-	return &foodi_user_service.UserDetailReply{}, nil
+	if user, err := l.svcCtx.UserInfoModel.FindByUID(l.ctx, in.GetUid()); err != nil {
+		return nil, err
+	} else {
+		return &foodi_user_service.UserDetailReply{
+			Name:     user.Name.String,
+			NikeName: user.NikeName.String,
+			Image:    user.Image.String,
+			Age:      int32(user.Age.Int64),
+			Gender:   user.Gender.String,
+			Birthday: user.Birthday.String,
+			Region:   user.Region.String,
+			LV:       int32(user.Lv.Int64),
+			VIP:      int32(user.Vip.Int64),
+		}, nil
+	}
 }

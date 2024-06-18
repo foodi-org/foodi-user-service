@@ -9,18 +9,19 @@ type (
 	}
 )
 
+// Error 接口实现
 func (e *GRPCError) Error() string {
 	return fmt.Sprintf("grpc code: %d, message: %s", e.Code, e.Message)
 }
 
 func (e *GRPCError) CommonErr() {
-	e.Code = COMMON
-	e.Message = msg[UNKONW]
+	e.Code = Common
+	e.Message = msg[UNKNOWN]
 }
 
 func (e *GRPCError) UnKnowErr() {
-	e.Code = UNKONW
-	e.Message = msg[UNKONW]
+	e.Code = UNKNOWN
+	e.Message = msg[UNKNOWN]
 }
 
 func GRPCErr() error {

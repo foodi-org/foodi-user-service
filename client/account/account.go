@@ -17,6 +17,7 @@ type (
 	ArticleInfo           = foodi_user_service.ArticleInfo
 	ArticleListReply      = foodi_user_service.ArticleListReply
 	ArticleListRequest    = foodi_user_service.ArticleListRequest
+	ArticleRefreshRequest = foodi_user_service.ArticleRefreshRequest
 	Author                = foodi_user_service.Author
 	CollectArticleRequest = foodi_user_service.CollectArticleRequest
 	CreateArticleRequest  = foodi_user_service.CreateArticleRequest

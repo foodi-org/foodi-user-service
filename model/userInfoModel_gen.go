@@ -25,6 +25,9 @@ type (
 	userInfoModel interface {
 		Insert(ctx context.Context, data *UserInfo) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserInfo, error)
+
+		FindByUID(ctx context.Context, uid int64) (*UserInfo, error)
+
 		Update(ctx context.Context, data *UserInfo) error
 		Delete(ctx context.Context, id int64) error
 
@@ -78,6 +81,20 @@ func (m *defaultUserInfoModel) FindOne(ctx context.Context, id int64) (*UserInfo
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userInfoRows, m.table)
 	var resp UserInfo
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlx.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultUserInfoModel) FindByUID(ctx context.Context, uid int64) (*UserInfo, error) {
+	query := fmt.Sprintf("select %s from %s where `deleted_at` is null and `uid` = ? limit 1", userInfoRows, m.table)
+	var resp UserInfo
+	err := m.conn.QueryRowCtx(ctx, &resp, query, uid)
 	switch err {
 	case nil:
 		return &resp, nil
