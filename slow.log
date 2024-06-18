@@ -1,0 +1,4 @@
+{"@timestamp":"2024-06-18T18:39:51.880+08:00","caller":"redis/durationhook.go:152","content":"[REDIS] slowcall on executing: ping","duration":"363.5ms","level":"slow"}
+{"@timestamp":"2024-06-18T18:42:34.901+08:00","caller":"redis/durationhook.go:152","content":"[REDIS] slowcall on executing: ping","duration":"276.4ms","level":"slow"}
+{"@timestamp":"2024-06-18T18:45:25.445+08:00","caller":"redis/durationhook.go:152","content":"[REDIS] slowcall on executing: ping","duration":"363.3ms","level":"slow"}
+{"@timestamp":"2024-06-18T18:52:55.586+08:00","caller":"redis/durationhook.go:152","content":"[REDIS] slowcall on executing: ping","duration":"147.4ms","level":"slow"}

@@ -31,6 +31,12 @@ type ArticleCommentInfo struct {
 	//
 	ParentId sql.NullInt64 `gorm:"comment:父评论id"`
 
+	//
+	//  FirstCommentId
+	//  @Description: 回复链的第一个回复id
+	//
+	FirstCommentId sql.NullInt64 `gorm:"comment:回复的起始评论"`
+
 	UpCount sql.NullInt16 `gorm:"comment:点赞数"`
 
 	ReplyCount sql.NullInt16 `gorm:"comment:回复此评论的数量"`

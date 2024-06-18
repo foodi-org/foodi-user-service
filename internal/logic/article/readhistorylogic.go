@@ -44,7 +44,7 @@ func (l *ReadHistoryLogic) ReadHistory(in *foodi_user_service.ReadHistoryRequest
 			})
 			return nil, nil
 		}
-		return nil, servError.NewGRPCError(servError.ARTICLE_NOT_FOUND, servError.Msg(servError.ARTICLE_NOT_FOUND))
+		return nil, servError.NewGRPCError(servError.ArticleNotFound, servError.Msg(servError.ArticleNotFound))
 	case foodi_user_service.ActionCoup_GET: // 获取用户近期阅读列表
 		if in.GetDatetime() == "" {
 			now := time.Now().AddDate(0, 0, -7)

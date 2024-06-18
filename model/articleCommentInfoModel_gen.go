@@ -34,18 +34,19 @@ type (
 	}
 
 	ArticleCommentInfo struct {
-		Id          int64          `db:"id"`
-		CreatedAt   sql.NullTime   `db:"created_at"`
-		UpdatedAt   sql.NullTime   `db:"updated_at"`
-		DeletedAt   sql.NullTime   `db:"deleted_at"`
-		ArticleId   sql.NullInt64  `db:"article_id"`
-		Uid         sql.NullInt64  `db:"uid"`          // 发布评论用户id
-		Content     sql.NullString `db:"content"`      // 评论内容
-		PostTime    sql.NullTime   `db:"post_time"`    // 发布时间
-		ParentId    sql.NullInt64  `db:"parent_id"`    // 父评论id
-		UpCount     sql.NullInt64  `db:"up_count"`     // 点赞数
-		ReplyCount  sql.NullInt64  `db:"reply_count"`  // 回复此评论的数量
-		IsAnonymous int64          `db:"is_anonymous"` // 是否匿名
+		Id             int64          `db:"id"`
+		CreatedAt      sql.NullTime   `db:"created_at"`
+		UpdatedAt      sql.NullTime   `db:"updated_at"`
+		DeletedAt      sql.NullTime   `db:"deleted_at"`
+		ArticleId      sql.NullInt64  `db:"article_id"`
+		Uid            sql.NullInt64  `db:"uid"`              // 发布评论用户id
+		Content        sql.NullString `db:"content"`          // 评论内容
+		PostTime       sql.NullTime   `db:"post_time"`        // 发布时间
+		ParentId       sql.NullInt64  `db:"parent_id"`        // 父评论id
+		FirstCommentId sql.NullInt64  `db:"first_comment_id"` // 回复的起始评论
+		UpCount        sql.NullInt64  `db:"up_count"`         // 点赞数
+		ReplyCount     sql.NullInt64  `db:"reply_count"`      // 回复此评论的数量
+		IsAnonymous    bool           `db:"is_anonymous"`     // 是否匿名
 	}
 )
 
@@ -77,14 +78,14 @@ func (m *defaultArticleCommentInfoModel) FindOne(ctx context.Context, id int64) 
 }
 
 func (m *defaultArticleCommentInfoModel) Insert(ctx context.Context, data *ArticleCommentInfo) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, articleCommentInfoRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.ArticleId, data.Uid, data.Content, data.PostTime, data.ParentId, data.UpCount, data.ReplyCount, data.IsAnonymous)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, articleCommentInfoRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.ArticleId, data.Uid, data.Content, data.PostTime, data.ParentId, data.FirstCommentId, data.UpCount, data.ReplyCount, data.IsAnonymous)
 	return ret, err
 }
 
 func (m *defaultArticleCommentInfoModel) Update(ctx context.Context, data *ArticleCommentInfo) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, articleCommentInfoRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.ArticleId, data.Uid, data.Content, data.PostTime, data.ParentId, data.UpCount, data.ReplyCount, data.IsAnonymous, data.Id)
+	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.ArticleId, data.Uid, data.Content, data.PostTime, data.ParentId, data.FirstCommentId, data.UpCount, data.ReplyCount, data.IsAnonymous, data.Id)
 	return err
 }
 
