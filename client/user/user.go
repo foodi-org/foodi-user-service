@@ -25,12 +25,12 @@ type (
 	Draft                 = foodi_user_service.Draft
 	DraftListReply        = foodi_user_service.DraftListReply
 	DraftListRequest      = foodi_user_service.DraftListRequest
+	LoginReply            = foodi_user_service.LoginReply
+	LoginRequest          = foodi_user_service.LoginRequest
 	OKReply               = foodi_user_service.OKReply
 	ReadHistoryRequest    = foodi_user_service.ReadHistoryRequest
 	RegisterReply         = foodi_user_service.RegisterReply
 	RegisterRequest       = foodi_user_service.RegisterRequest
-	TokenReply            = foodi_user_service.TokenReply
-	TokenRequest          = foodi_user_service.TokenRequest
 	UpRequest             = foodi_user_service.UpRequest
 	UserDetailReply       = foodi_user_service.UserDetailReply
 	UserDetailRequest     = foodi_user_service.UserDetailRequest

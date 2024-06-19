@@ -26,6 +26,13 @@ type (
 		FindOne(ctx context.Context, id int64) (*ArticleCommentInfo, error)
 		Update(ctx context.Context, data *ArticleCommentInfo) error
 		Delete(ctx context.Context, id int64) error
+
+		/*ReplyAddOne
+		@Description: 评论回复数量增加1
+		@param id: 被评论的记录id
+		@return error
+		*/
+		ReplyAddOne(ctx context.Context, id int64) error
 	}
 
 	defaultArticleCommentInfoModel struct {
@@ -86,6 +93,17 @@ func (m *defaultArticleCommentInfoModel) Insert(ctx context.Context, data *Artic
 func (m *defaultArticleCommentInfoModel) Update(ctx context.Context, data *ArticleCommentInfo) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, articleCommentInfoRowsWithPlaceHolder)
 	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.ArticleId, data.Uid, data.Content, data.PostTime, data.ParentId, data.FirstCommentId, data.UpCount, data.ReplyCount, data.IsAnonymous, data.Id)
+	return err
+}
+
+// ReplyAddOne
+//
+//	@Description: 评论回复数量增加1
+//	@param id: 被评论的记录id
+//	@return error
+func (m *defaultArticleCommentInfoModel) ReplyAddOne(ctx context.Context, id int64) error {
+	query := fmt.Sprintf("update %s set `reply_count` = `reply_count` + 1 where `id` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, id)
 	return err
 }
 

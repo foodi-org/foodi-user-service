@@ -24,6 +24,9 @@ type (
 	accountInfoModel interface {
 		Insert(ctx context.Context, data *AccountInfo) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*AccountInfo, error)
+
+		FindWithPhone(ctx context.Context, phone int64) (*AccountInfo, error)
+
 		Update(ctx context.Context, data *AccountInfo) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -67,6 +70,20 @@ func (m *defaultAccountInfoModel) FindOne(ctx context.Context, id int64) (*Accou
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", accountInfoRows, m.table)
 	var resp AccountInfo
 	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlx.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultAccountInfoModel) FindWithPhone(ctx context.Context, phone int64) (*AccountInfo, error) {
+	query := fmt.Sprintf("select %s from %s where `phone` = ? limit 1", accountInfoRows, m.table)
+	var resp AccountInfo
+	err := m.conn.QueryRowCtx(ctx, &resp, query, phone)
 	switch err {
 	case nil:
 		return &resp, nil

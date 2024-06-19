@@ -25,25 +25,25 @@ func NewCreateArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 	}
 }
 
-// 新增文章
+// CreateArticle 新增文章
 func (l *CreateArticleLogic) CreateArticle(in *foodi_user_service.CreateArticleRequest) (*foodi_user_service.OKReply, error) {
-	// todo: add your logic here and delete this line
 
 	_, err := l.svcCtx.ArticleModel.Insert(l.ctx, &model.ArticleInfo{
 		Uid:         in.GetUid(),
 		Published:   sql.NullInt64{},
 		PublishedAt: sql.NullTime{},
-		ArticleType: "",
-		Title:       sql.NullString{in.GetTitle(), true},
+		ArticleType: in.GetType().String(),
+		Title:       sql.NullString{String: in.GetTitle(), Valid: true},
 		Video:       sql.NullString{},
 		ImageUrl:    sql.NullString{},
 		Content:     sql.NullString{},
-		Region:      sql.NullString{},
+		Region:      sql.NullString{String: in.GetRegion(), Valid: in.GetRegion() != ""},
 		Location:    sql.NullString{},
 		Merchant:    sql.NullInt64{},
-		Cover:       sql.NullString{},
+		Cover:       sql.NullString{String: in.GetCover(), Valid: in.GetCover() != ""},
 	})
 	if err != nil {
+		l.Logger.Error("创建文章执行sql失败", "error:", err)
 		return nil, err
 	}
 

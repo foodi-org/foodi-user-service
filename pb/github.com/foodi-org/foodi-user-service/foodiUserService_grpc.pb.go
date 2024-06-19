@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Account_Token_FullMethodName    = "/foodiUserService.Account/Token"
 	Account_Register_FullMethodName = "/foodiUserService.Account/Register"
+	Account_Login_FullMethodName    = "/foodiUserService.Account/Login"
 )
 
 // AccountClient is the client API for Account service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountClient interface {
-	// 获取token
-	Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error)
 	// 普通用户注册
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
+	// 用户登录
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 }
 
 type accountClient struct {
@@ -39,15 +39,6 @@ type accountClient struct {
 
 func NewAccountClient(cc grpc.ClientConnInterface) AccountClient {
 	return &accountClient{cc}
-}
-
-func (c *accountClient) Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error) {
-	out := new(TokenReply)
-	err := c.cc.Invoke(ctx, Account_Token_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *accountClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
@@ -59,14 +50,23 @@ func (c *accountClient) Register(ctx context.Context, in *RegisterRequest, opts 
 	return out, nil
 }
 
+func (c *accountClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
+	out := new(LoginReply)
+	err := c.cc.Invoke(ctx, Account_Login_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountServer is the server API for Account service.
 // All implementations must embed UnimplementedAccountServer
 // for forward compatibility
 type AccountServer interface {
-	// 获取token
-	Token(context.Context, *TokenRequest) (*TokenReply, error)
 	// 普通用户注册
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
+	// 用户登录
+	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	mustEmbedUnimplementedAccountServer()
 }
 
@@ -74,11 +74,11 @@ type AccountServer interface {
 type UnimplementedAccountServer struct {
 }
 
-func (UnimplementedAccountServer) Token(context.Context, *TokenRequest) (*TokenReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Token not implemented")
-}
 func (UnimplementedAccountServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedAccountServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedAccountServer) mustEmbedUnimplementedAccountServer() {}
 
@@ -91,24 +91,6 @@ type UnsafeAccountServer interface {
 
 func RegisterAccountServer(s grpc.ServiceRegistrar, srv AccountServer) {
 	s.RegisterService(&Account_ServiceDesc, srv)
-}
-
-func _Account_Token_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TokenRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServer).Token(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Account_Token_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServer).Token(ctx, req.(*TokenRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Account_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -129,6 +111,24 @@ func _Account_Register_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Account_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Account_Login_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Account_ServiceDesc is the grpc.ServiceDesc for Account service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -137,12 +137,12 @@ var Account_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AccountServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Token",
-			Handler:    _Account_Token_Handler,
-		},
-		{
 			MethodName: "Register",
 			Handler:    _Account_Register_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _Account_Login_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

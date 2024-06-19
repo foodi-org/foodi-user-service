@@ -28,7 +28,7 @@ func NewCollectArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Co
 	}
 }
 
-// 收藏文章列表 & 取消收藏
+// CollectArticle 收藏文章列表 & 取消收藏
 func (l *CollectArticleLogic) CollectArticle(in *foodi_user_service.CollectArticleRequest) (*foodi_user_service.OKReply, error) {
 	// 参数校验
 	if in.GetUid() == 0 || in.GetArticleID() == 0 {
@@ -41,7 +41,7 @@ func (l *CollectArticleLogic) CollectArticle(in *foodi_user_service.CollectArtic
 		return nil, errors.New("found article fail")
 	}
 	if record == nil {
-		return nil, errors.New("article not found")
+		return nil, servError.NewGRPCError(servError.ArticleNotFound, servError.Msg(servError.ArticleNotFound))
 	}
 
 	switch in.GetAction() {
@@ -51,7 +51,7 @@ func (l *CollectArticleLogic) CollectArticle(in *foodi_user_service.CollectArtic
 			ArticleId: sql.NullInt64{Int64: in.ArticleID, Valid: true},
 		})
 		if err != nil {
-			return nil, errors.New("save article fail")
+			return nil, servError.NewGRPCError(servError.ArticleSaveFail, servError.Msg(servError.ArticleSaveFail))
 		}
 		return &foodi_user_service.OKReply{Ok: true}, nil
 	case foodi_user_service.ActionCoup_Cancel:
@@ -60,7 +60,7 @@ func (l *CollectArticleLogic) CollectArticle(in *foodi_user_service.CollectArtic
 			ArticleID: in.GetArticleID(),
 			Type:      foodi_user_service.ActionCoup_Cancel.String(),
 		}); err != nil {
-			return nil, errors.New("save article fail")
+			return nil, servError.NewGRPCError(servError.ArticleSaveFail, servError.Msg(servError.ArticleSaveFail))
 		}
 		return &foodi_user_service.OKReply{Ok: true}, nil
 	default:

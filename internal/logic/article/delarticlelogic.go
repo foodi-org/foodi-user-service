@@ -23,7 +23,7 @@ func NewDelArticleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DelArt
 	}
 }
 
-// 删除文章
+// DelArticle 删除文章
 func (l *DelArticleLogic) DelArticle(in *foodi_user_service.DelArticleRequest) (*foodi_user_service.OKReply, error) {
 	if err := l.svcCtx.ArticleModel.Disable(l.ctx, in.GetId(), in.GetUid()); err != nil {
 		return &foodi_user_service.OKReply{}, err

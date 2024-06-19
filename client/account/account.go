@@ -25,12 +25,12 @@ type (
 	Draft                 = foodi_user_service.Draft
 	DraftListReply        = foodi_user_service.DraftListReply
 	DraftListRequest      = foodi_user_service.DraftListRequest
+	LoginReply            = foodi_user_service.LoginReply
+	LoginRequest          = foodi_user_service.LoginRequest
 	OKReply               = foodi_user_service.OKReply
 	ReadHistoryRequest    = foodi_user_service.ReadHistoryRequest
 	RegisterReply         = foodi_user_service.RegisterReply
 	RegisterRequest       = foodi_user_service.RegisterRequest
-	TokenReply            = foodi_user_service.TokenReply
-	TokenRequest          = foodi_user_service.TokenRequest
 	UpRequest             = foodi_user_service.UpRequest
 	UserDetailReply       = foodi_user_service.UserDetailReply
 	UserDetailRequest     = foodi_user_service.UserDetailRequest
@@ -39,10 +39,10 @@ type (
 	UserRequest           = foodi_user_service.UserRequest
 
 	Account interface {
-		// 获取token
-		Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error)
 		// 普通用户注册
 		Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
+		// 用户登录
+		Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	}
 
 	defaultAccount struct {
@@ -56,14 +56,14 @@ func NewAccount(cli zrpc.Client) Account {
 	}
 }
 
-// 获取token
-func (m *defaultAccount) Token(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenReply, error) {
-	client := foodi_user_service.NewAccountClient(m.cli.Conn())
-	return client.Token(ctx, in, opts...)
-}
-
 // 普通用户注册
 func (m *defaultAccount) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
 	client := foodi_user_service.NewAccountClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
+}
+
+// 用户登录
+func (m *defaultAccount) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
+	client := foodi_user_service.NewAccountClient(m.cli.Conn())
+	return client.Login(ctx, in, opts...)
 }

@@ -10,6 +10,13 @@ enum UserCoup {
   RIDER = 2; // 配送骑手
 }
 
+// 用户注册与登录类型枚举
+enum RegisterCoup {
+  Phone = 0; // 手机号一键登录注册
+  Code = 1; // 手机验证码登录注册
+  Password = 3; // 密码登录注册
+}
+
 // 用户操作类型枚举
 enum ActionCoup {
   ADD = 0; // 新增类型。点赞或者收藏文章等操作类型
@@ -27,24 +34,30 @@ message OKReply {
   bool ok = 1;
 }
 
-message TokenRequest {
-  string username = 1;
-  string password = 2;
-  UserCoup type = 3;
-}
-
-message TokenReply {
-  string token = 1;
-}
-
 message RegisterRequest {
-  string type = 1;
-  string phone = 2;
-  string code = 3;
+  UserCoup type = 1;
+  RegisterCoup registerType = 2;
+  string phone = 3;
+  string code = 4;
+  string password = 5;
 }
 
 message RegisterReply {
   bool ok = 1;
+  string token = 2;
+  int64 uid = 3;
+}
+
+message LoginRequest {
+  UserCoup type = 1;
+  RegisterCoup loginType = 2;
+  int64 phone = 3;
+  string code = 4;
+  string password = 5;
+  int64 length = 6;
+}
+
+message LoginReply {
   string token = 2;
   int64 uid = 3;
 }
@@ -191,11 +204,12 @@ message ReadHistoryRequest {
 
 // 账号信息 service
 service Account {
-  // 获取token
-  rpc Token(TokenRequest) returns (TokenReply);
 
   // 普通用户注册
   rpc Register(RegisterRequest) returns (RegisterReply);
+
+  // 用户登录
+  rpc Login(LoginRequest) returns (LoginReply);
 }
 
 // 用户信息 service

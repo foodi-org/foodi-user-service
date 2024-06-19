@@ -22,14 +22,14 @@ func NewAccountServer(svcCtx *svc.ServiceContext) *AccountServer {
 	}
 }
 
-// 获取token
-func (s *AccountServer) Token(ctx context.Context, in *foodi_user_service.TokenRequest) (*foodi_user_service.TokenReply, error) {
-	l := accountlogic.NewTokenLogic(ctx, s.svcCtx)
-	return l.Token(in)
-}
-
 // 普通用户注册
 func (s *AccountServer) Register(ctx context.Context, in *foodi_user_service.RegisterRequest) (*foodi_user_service.RegisterReply, error) {
 	l := accountlogic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
+}
+
+// 用户登录
+func (s *AccountServer) Login(ctx context.Context, in *foodi_user_service.LoginRequest) (*foodi_user_service.LoginReply, error) {
+	l := accountlogic.NewLoginLogic(ctx, s.svcCtx)
+	return l.Login(in)
 }
