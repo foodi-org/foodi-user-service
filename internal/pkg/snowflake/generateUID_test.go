@@ -18,6 +18,10 @@ func TestRuleUID(t *testing.T) {
 			name: "TestRuleUID",
 			args: args{machineLen: 900},
 		},
+		{
+			name: "TestRuleUID",
+			args: args{machineLen: 3},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -23,6 +23,9 @@ var (
 type (
 	accountInfoModel interface {
 		Insert(ctx context.Context, data *AccountInfo) (sql.Result, error)
+
+		TransInsert(ctx context.Context, session sqlx.Session, data *AccountInfo) (sql.Result, error)
+
 		FindOne(ctx context.Context, id int64) (*AccountInfo, error)
 
 		FindWithPhone(ctx context.Context, phone int64) (*AccountInfo, error)
@@ -98,6 +101,11 @@ func (m *defaultAccountInfoModel) Insert(ctx context.Context, data *AccountInfo)
 	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, accountInfoRowsExpectAutoSet)
 	ret, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.Type, data.NikeName, data.Image, data.Phone, data.Password, data.FirstRegister, data.LastLogin, data.Verified, data.BindWx)
 	return ret, err
+}
+
+func (m *defaultAccountInfoModel) TransInsert(ctx context.Context, session sqlx.Session, data *AccountInfo) (sql.Result, error) {
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, accountInfoRowsExpectAutoSet)
+	return session.ExecCtx(ctx, query, data.DeletedAt, data.Type, data.NikeName, data.Image, data.Phone, data.Password, data.FirstRegister, data.LastLogin, data.Verified, data.BindWx)
 }
 
 func (m *defaultAccountInfoModel) Update(ctx context.Context, data *AccountInfo) error {

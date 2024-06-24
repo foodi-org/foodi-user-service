@@ -24,6 +24,9 @@ var (
 type (
 	userInfoModel interface {
 		Insert(ctx context.Context, data *UserInfo) (sql.Result, error)
+
+		TransInsert(ctx context.Context, session sqlx.Session, data *UserInfo) (sql.Result, error)
+
 		FindOne(ctx context.Context, id int64) (*UserInfo, error)
 
 		FindByUID(ctx context.Context, uid int64) (*UserInfo, error)
@@ -35,6 +38,8 @@ type (
 		@Description: 更新用户头像
 		*/
 		UpdateImage(ctx context.Context, data *bo.UpdateImageBO) error
+
+		TakeWithAid(ctx context.Context, aid int64) (*UserInfo, error)
 	}
 
 	defaultUserInfoModel struct {
@@ -111,6 +116,11 @@ func (m *defaultUserInfoModel) Insert(ctx context.Context, data *UserInfo) (sql.
 	return ret, err
 }
 
+func (m *defaultUserInfoModel) TransInsert(ctx context.Context, session sqlx.Session, data *UserInfo) (sql.Result, error) {
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, userInfoRowsExpectAutoSet)
+	return session.ExecCtx(ctx, query, data.DeletedAt, data.Uid, data.Aid, data.Name, data.CardType, data.CardId, data.Gender, data.Age, data.Birthday, data.Region, data.WeChatId, data.Lv, data.Vip, data.NikeName, data.Image)
+}
+
 func (m *defaultUserInfoModel) Update(ctx context.Context, data *UserInfo) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userInfoRowsWithPlaceHolder)
 	_, err := m.conn.ExecCtx(ctx, query, data.DeletedAt, data.Uid, data.Aid, data.Name, data.CardType, data.CardId, data.Gender, data.Age, data.Birthday, data.Region, data.WeChatId, data.Lv, data.Vip, data.NikeName, data.Image, data.Id)
@@ -126,6 +136,20 @@ func (m *defaultUserInfoModel) UpdateImage(ctx context.Context, data *bo.UpdateI
 	query := fmt.Sprintf("update %s set `image` = ? where `id` = ? and `deleted_at` is null", m.table, data.Image, data.Uid)
 	_, err := m.conn.ExecCtx(ctx, query)
 	return err
+}
+
+func (m *defaultUserInfoModel) TakeWithAid(ctx context.Context, aid int64) (*UserInfo, error) {
+	query := fmt.Sprintf("select %s from %s where `deleted_at` is null and `aid` = ? limit 1", userInfoRows, m.table)
+	var resp UserInfo
+	err := m.conn.QueryRowCtx(ctx, &resp, query, aid)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlx.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultUserInfoModel) tableName() string {

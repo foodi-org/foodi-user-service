@@ -29,7 +29,6 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 // Login 用户登录
 func (l *LoginLogic) Login(in *foodi_user_service.LoginRequest) (*foodi_user_service.LoginReply, error) {
-	// todo: add your logic here and delete this line
 	if in.GetPhone() == 0 {
 		return nil, servError.NewGRPCError(servError.MissPhoneNumber, servError.Msg(servError.MissPhoneNumber))
 	}
@@ -55,11 +54,11 @@ func (l *LoginLogic) Login(in *foodi_user_service.LoginRequest) (*foodi_user_ser
 					return nil, servError.NewGRPCError(servError.AccountPasswordNotMatch, servError.Msg(servError.AccountPasswordNotMatch))
 				}
 
-				// 生成token 写入redis 返回
-				token := ""
-				_ = l.svcCtx.Redis.Setex(fmt.Sprintf("jwt-%d", account.Id), token, 7*24*3600)
-
-				return &foodi_user_service.LoginReply{}, nil
+				if user, err := l.svcCtx.UserInfoModel.TakeWithAid(l.ctx, account.Id); err != nil {
+					return nil, err
+				} else {
+					return &foodi_user_service.LoginReply{Uid: user.Uid.Int64}, nil
+				}
 			default:
 				return nil, err
 			}
@@ -81,6 +80,4 @@ func (l *LoginLogic) Login(in *foodi_user_service.LoginRequest) (*foodi_user_ser
 	default:
 		return nil, servError.NewGRPCError(servError.InvalidRegisterCoup, servError.Msg(servError.InvalidRegisterCoup))
 	}
-
-	return &foodi_user_service.LoginReply{}, nil
 }

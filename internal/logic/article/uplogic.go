@@ -58,6 +58,10 @@ func (l *UpLogic) Up(in *foodi_user_service.UpRequest) (*foodi_user_service.OKRe
 		}); err != nil {
 			return nil, err
 		} else {
+			// 更新文章或者评论的点赞数
+			go func() {
+
+			}()
 			return &foodi_user_service.OKReply{Ok: true}, nil
 		}
 	case foodi_user_service.ActionCoup_Cancel:

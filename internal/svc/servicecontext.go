@@ -12,9 +12,9 @@ import (
 var svc = ServiceContext{}
 
 type ServiceContext struct {
-	Config *config.Config
-	Redis  *redis.Redis
-
+	Config              *config.Config
+	Redis               *redis.Redis
+	DB                  sqlx.SqlConn
 	AccountModel        model.AccountInfoModel
 	ArticleCommentModel model.ArticleCommentInfoModel
 	SaveArticleModel    model.SaveArticleInfoModel
@@ -66,6 +66,7 @@ func NewServiceContext(c *config.Config, path string, file string) error {
 
 	// mysql
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	svc.DB = conn
 	svc.AccountModel = model.NewAccountInfoModel(conn)
 	svc.ArticleCommentModel = model.NewArticleCommentInfoModel(conn)
 	svc.SaveArticleModel = model.NewSaveArticleInfoModel(conn)
