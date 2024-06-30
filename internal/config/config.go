@@ -15,6 +15,7 @@ var (
 )
 
 type (
+	// Config go-zero rpc 服务配置结构体
 	Config struct {
 		zrpc.RpcServerConf
 
@@ -25,7 +26,8 @@ type (
 		Consul consul.Conf
 	}
 
-	SrvYaml struct {
+	// ServYaml etc yaml 文件配置映射结构体
+	ServYaml struct {
 		UnmarshalKey string     `yaml:"UnmarshalKey"`
 		ConsulYaml   ConsulYaml `yaml:"Consul"`
 	}
@@ -43,8 +45,8 @@ type (
 		Protocol string `yaml:"Protocol"`
 	}
 
-	// UserConf nacos 配置映射结构体
-	UserConf struct {
+	// UserConsulConf consul 配置映射结构体
+	UserConsulConf struct {
 		// ServiceName 服务名
 		ServiceName string `json:"serviceName"`
 
@@ -83,8 +85,8 @@ func ServConf() *Config {
 //	@return error
 func InitServConf(path string, filename string) error {
 	var (
-		srvYaml SrvYaml
-		lbsConf UserConf
+		servYaml       ServYaml
+		userConsulConf UserConsulConf
 	)
 
 	// 解析yaml配置文件
@@ -93,16 +95,16 @@ func InitServConf(path string, filename string) error {
 		return err
 	}
 
-	if err = yaml.Unmarshal(file, &srvYaml); err != nil {
+	if err = yaml.Unmarshal(file, &servYaml); err != nil {
 		return err
 	}
 
 	servConf.Consul = consul.Conf{
-		Host:  srvYaml.ConsulYaml.Host,
-		Key:   srvYaml.ConsulYaml.Key,
-		Token: srvYaml.ConsulYaml.Token,
-		Tag:   srvYaml.ConsulYaml.Tag,
-		TTL:   srvYaml.ConsulYaml.TTL,
+		Host:  servYaml.ConsulYaml.Host,
+		Key:   servYaml.ConsulYaml.Key,
+		Token: servYaml.ConsulYaml.Token,
+		Tag:   servYaml.ConsulYaml.Tag,
+		TTL:   servYaml.ConsulYaml.TTL,
 	}
 
 	if err = servConf.Consul.Validate(); err != nil {
@@ -118,23 +120,23 @@ func InitServConf(path string, filename string) error {
 	}
 
 	// load service config from consul with key
-	if err = consulClient.LoadJsonConfig(srvYaml.UnmarshalKey, &lbsConf); err != nil {
+	if err = consulClient.LoadJsonConfig(servYaml.UnmarshalKey, &userConsulConf); err != nil {
 		panic(err)
 	}
 
 	// 设置 zrpc service config
-	servConf.Name = lbsConf.ServiceName
-	servConf.ListenOn = lbsConf.ListenOn
-	servConf.Mysql.DataSource = lbsConf.Mysql.Datasource
+	servConf.Name = userConsulConf.ServiceName
+	servConf.ListenOn = userConsulConf.ListenOn
+	servConf.Mysql.DataSource = userConsulConf.Mysql.Datasource
 
 	servConf.Redis = redis.RedisKeyConf{
 		RedisConf: redis.RedisConf{
-			Host: lbsConf.Redis.Host,
-			Type: lbsConf.Redis.Type,
-			Pass: lbsConf.Redis.Password,
-			Tls:  lbsConf.Redis.TLS,
+			Host: userConsulConf.Redis.Host,
+			Type: userConsulConf.Redis.Type,
+			Pass: userConsulConf.Redis.Password,
+			Tls:  userConsulConf.Redis.TLS,
 		},
-		Key: lbsConf.ServiceName,
+		Key: userConsulConf.ServiceName,
 	}
 	return nil
 }
