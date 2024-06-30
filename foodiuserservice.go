@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/foodiuserservice.yaml", "the config file")
+var configFile = flag.String("f", "dev.yaml", "the config file")
 
 func main() {
 	var c = config.ServConf()

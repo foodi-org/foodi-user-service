@@ -1,4 +1,4 @@
-package foodi_user_service
+package main
 
 import "github.com/zeromicro/go-zero/core/stores/sqlx"
 
