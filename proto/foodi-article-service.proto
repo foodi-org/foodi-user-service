@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package foodiUserService;
+
+option go_package="github.com/foodi-org/foodi-user-service";
+
+
+// 用户操作类型枚举
+enum ActionCoup {
+  ADD = 0; // 新增类型。点赞或者收藏文章等操作类型
+  Cancel = 1; // 取消类型。取消点赞或者取消收藏等操作类型
+  GET = 2; // 获取类型
+}
+
+// 资源类型
+enum ResourceCoup {
+  IMAGE = 0; // 图片
+  VIDEO = 2; // 视频
+}
+
+message Author {
+  int64 uid = 1; // 作者id
+  string name = 2; // 作者名称
+  string image = 3; // 作者头像
+}
+
+// 文章概览信息
+message ArticleInfo {
+  int64 id = 1; // 文章id
+  Author author = 2; // 文章作者信息
+  int64 upNum = 3; // 点赞数量
+  string title = 4; // 文章标题
+  string cover = 5; // 封面 url
+  ResourceCoup coverType = 6; // 封面类型
+}
+
+// 创建文章
+message CreateArticleRequest {
+  int64 Uid = 1; // 用户id
+  string Title = 2; // 标题
+  string Content = 3; // 文章内容
+  ResourceCoup Type = 4; // 文章类型
+  repeated string URL = 5; // 资源地址
+  string Region = 6; // 显示的地域
+  double Longitude = 7; // 显示定位的经度
+  double latitude = 8; // 显示定位的纬度
+  int64 MerchantID = 9; // 关联的商家id
+  string Cover = 10; // 封面
+}
+
+// 评论
+message AddCommentRequest {
+  int64 Uid = 1; // 发布评论的用户id
+  int64 ArticleID = 2; // 文章id
+  int64 ParentID = 3; // 评论的父id
+  string Content = 4; // 回复内容
+  bool IsAnonymous = 5; // 是否匿名
+}
+
+// 点赞 & 取消点赞
+message UpRequest {
+  int64 Uid = 1; // 发起点赞用户id
+  int64 ArticleID = 2; // 文章id
+  int64 CommentID = 3; // 评论id
+  ActionCoup Action = 4; // up: 点赞; down: 取消点赞
+}
+
+// 文章收藏 & 取消收藏
+message CollectArticleRequest {
+  int64 Uid = 1;
+  int64 ArticleID = 2;
+  ActionCoup Action = 3; // save: 收藏; cancel: 取消收藏
+}
+
+// 删除文章
+message DelArticleRequest {
+  int64 id = 1;
+  int64 uid = 2;
+}
+
+// 用户文章草稿列表
+message DraftListRequest {
+  int64 uid = 1;
+}
+
+// 用户文章草稿列表
+message Draft {
+  int64 id = 1;
+  string title = 2;
+  string time = 3;
+}
+
+// 用户文章草稿列表
+message DraftListReply {
+  repeated Draft list = 1;
+}
+
+// 下拉获取文章列表
+message ArticleListRequest {
+  int64 start = 1; // 起始文章索引
+  int64 end = 2; // 结束文章索引
+  int64 num = 3; // 页码
+  int64 size = 4; // 每页数量
+}
+
+// 刷新文章列表
+message ArticleRefreshRequest {}
+
+message ArticleListReply {
+  int64 start = 1;
+  int64 end = 2;
+  int64 num = 3; // 当前页码
+  int64 size = 4; // 每页数量
+  int64 total = 5; // 总页数
+  repeated ArticleInfo list = 6;
+}
+
+// 文章历史
+message ReadHistoryRequest {
+  int64 uid = 1;
+  int64 aid = 2;
+  ActionCoup action = 3;
+  string datetime = 4; // 起始时间，只计算到日期不计算时间
+  int64 step = 5; // 时间步长
+}
+
+message OKReply {
+  bool ok = 1;
+}
+
+// 文章与评论 service
+service Article {
+  // 新增文章
+  rpc CreateArticle(CreateArticleRequest) returns (OKReply);
+
+  // 评论文章或者回复评论
+  rpc AddComment(AddCommentRequest) returns (OKReply);
+
+  // 点赞文章或者评论
+  rpc Up(UpRequest) returns (OKReply);
+
+  // 收藏文章列表 & 取消收藏
+  rpc CollectArticle(CollectArticleRequest) returns (OKReply);
+
+  // 删除文章
+  rpc DelArticle(DelArticleRequest) returns (OKReply);
+
+  // 获取用户草稿文章列表
+  rpc DraftList(DraftListRequest) returns (DraftListReply);
+
+  // 获取用户最近一周的文章访问历史记录
+  rpc ReadHistory(ReadHistoryRequest) returns (ArticleListReply);
+
+  // 用户下滑继续获取文章列表
+  rpc ArticleList(ArticleListRequest) returns (ArticleListReply);
+
+  // 用户下拉刷新文章列表
+  rpc ArticleRefresh(ArticleRefreshRequest) returns (ArticleListReply);
+}
