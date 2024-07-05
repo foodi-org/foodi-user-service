@@ -38,7 +38,7 @@ message UserDetailReply {
   int32 VIP = 9;
 }
 
-message OKReply {
+message UserOKReply {
   bool ok = 1;
 }
 
@@ -52,5 +52,5 @@ service User {
   rpc DetailInfo(UserDetailRequest) returns (UserDetailReply);
 
   // 更新用户头像
-  rpc UserImage(UserImageRequest) returns (OKReply);
+  rpc UserImage(UserImageRequest) returns (UserOKReply);
 }
