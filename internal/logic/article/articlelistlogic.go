@@ -2,8 +2,8 @@ package articlelogic
 
 import (
 	"context"
-
 	"github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
+
 	"github.com/foodi-org/foodi-user-service/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"

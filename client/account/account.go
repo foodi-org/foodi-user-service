@@ -6,8 +6,6 @@ package account
 import (
 	"context"
 
-	"github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
-
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )

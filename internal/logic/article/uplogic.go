@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
 	"github.com/foodi-org/foodi-user-service/internal/pkg/servError"
 	"github.com/foodi-org/foodi-user-service/model"
 	"github.com/foodi-org/foodi-user-service/model/modelType/bo"
 
-	"github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
 	"github.com/foodi-org/foodi-user-service/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
