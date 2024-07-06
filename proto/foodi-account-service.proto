@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package foodiUserService;
+
+option go_package="github.com/foodi-org/foodi-user-service";
+
+// 用户类型枚举
+enum UserCoup {
+  BUYER = 0; // 普通用户
+  MERCHANT = 1; // 商家用户
+  RIDER = 2; // 配送骑手
+}
+
+// 用户注册与登录类型枚举
+enum RegisterCoup {
+  Phone = 0; // 手机号一键登录注册
+  Code = 1; // 手机验证码登录注册
+  Password = 3; // 密码登录注册
+}
+
+message RegisterRequest {
+  UserCoup type = 1;
+  RegisterCoup registerType = 2;
+  int64 phone = 3;
+  string code = 4;
+  string password = 5;
+  int64 length = 6; // 密码登录时的补位长度
+}
+
+message RegisterReply {
+  bool ok = 1;
+  string token = 2;
+  int64 uid = 3;
+}
+
+message LoginRequest {
+  UserCoup type = 1;
+  RegisterCoup loginType = 2;
+  int64 phone = 3;
+  string code = 4;
+  string password = 5;
+  int64 length = 6;
+}
+
+message LoginReply {
+  string token = 2;
+  int64 uid = 3;
+}
+
+// 账号信息 service
+service Account {
+
+  // 普通用户注册
+  rpc Register(RegisterRequest) returns (RegisterReply);
+
+  // 用户登录
+  rpc Login(LoginRequest) returns (LoginReply);
+}

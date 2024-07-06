@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package foodiUserService;
+
+option go_package="github.com/foodi-org/foodi-user-service";
+
+message UserRequest {
+  int64 Uid = 1;
+}
+
+message UserReply {
+  string Name = 1;
+  string NikeName = 2;
+  string Image = 3;
+  int32 LV = 4;
+}
+
+// 更新用户头像
+message UserImageRequest {
+  int64 uid = 1;
+  string image = 2;
+}
+
+// 获取用户详情
+message UserDetailRequest {
+  int64 Uid = 1;
+}
+
+message UserDetailReply {
+  string Name = 1;
+  string NikeName = 2;
+  string Image = 3;
+  int32 Age = 4;
+  string Gender = 5;
+  string Birthday = 6;
+  string Region = 7;
+  int32 LV = 8;
+  int32 VIP = 9;
+}
+
+message UserOKReply {
+  bool ok = 1;
+}
+
+// 用户信息 service
+service User {
+
+  // 获取用户基础信息
+  rpc BaseInfo(UserRequest) returns(UserReply);
+
+  // 获取用户详情
+  rpc DetailInfo(UserDetailRequest) returns (UserDetailReply);
+
+  // 更新用户头像
+  rpc UserImage(UserImageRequest) returns (UserOKReply);
+}
