@@ -47,6 +47,14 @@ message LoginReply {
   int64 uid = 3;
 }
 
+message PhoneExistRequest {
+  int64 phone = 1;
+}
+
+message PhoneExistReply {
+  bool exist = 1;
+}
+
 // 账号信息 service
 service Account {
 
@@ -55,4 +63,6 @@ service Account {
 
   // 用户登录
   rpc Login(LoginRequest) returns (LoginReply);
+
+  rpc PhoneExist(PhoneExistRequest) returns (PhoneExistReply);
 }

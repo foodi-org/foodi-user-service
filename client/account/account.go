@@ -6,21 +6,26 @@ package account
 import (
 	"context"
 
+	"github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
+
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	LoginReply      = foodi_user_service.LoginReply
-	LoginRequest    = foodi_user_service.LoginRequest
-	RegisterReply   = foodi_user_service.RegisterReply
-	RegisterRequest = foodi_user_service.RegisterRequest
+	LoginReply        = foodi_user_service.LoginReply
+	LoginRequest      = foodi_user_service.LoginRequest
+	PhoneExistReply   = foodi_user_service.PhoneExistReply
+	PhoneExistRequest = foodi_user_service.PhoneExistRequest
+	RegisterReply     = foodi_user_service.RegisterReply
+	RegisterRequest   = foodi_user_service.RegisterRequest
 
 	Account interface {
 		// 普通用户注册
 		Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 		// 用户登录
 		Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
+		PhoneExist(ctx context.Context, in *PhoneExistRequest, opts ...grpc.CallOption) (*PhoneExistReply, error)
 	}
 
 	defaultAccount struct {
@@ -44,4 +49,9 @@ func (m *defaultAccount) Register(ctx context.Context, in *RegisterRequest, opts
 func (m *defaultAccount) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
 	client := foodi_user_service.NewAccountClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
+}
+
+func (m *defaultAccount) PhoneExist(ctx context.Context, in *PhoneExistRequest, opts ...grpc.CallOption) (*PhoneExistReply, error) {
+	client := foodi_user_service.NewAccountClient(m.cli.Conn())
+	return client.PhoneExist(ctx, in, opts...)
 }

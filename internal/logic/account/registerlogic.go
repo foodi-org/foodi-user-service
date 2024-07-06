@@ -3,6 +3,7 @@ package accountlogic
 import (
 	"context"
 	"database/sql"
+	"errors"
 	_const "github.com/foodi-org/foodi-user-service/internal/const"
 	"github.com/foodi-org/foodi-user-service/internal/pkg/snowflake"
 	"github.com/foodi-org/foodi-user-service/model"
@@ -30,6 +31,17 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(in *foodi_user_service.RegisterRequest) (*foodi_user_service.RegisterReply, error) {
+	// phone exist
+	_, err := l.svcCtx.AccountModel.FindWithPhone(l.ctx, in.GetPhone())
+	switch {
+	case errors.Is(err, sqlx.ErrNotFound):
+		break
+	case err == nil:
+		return &foodi_user_service.RegisterReply{}, errors.New("该手机号已注册")
+	default:
+		return &foodi_user_service.RegisterReply{}, err
+	}
+
 	if err := l.svcCtx.DB.Transact(func(session sqlx.Session) error {
 		res, err := l.svcCtx.AccountModel.TransInsert(l.ctx, session, &model.AccountInfo{
 			Type:          sql.NullString{String: in.GetType().String(), Valid: true},

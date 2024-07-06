@@ -33,3 +33,8 @@ func (s *AccountServer) Login(ctx context.Context, in *foodi_user_service.LoginR
 	l := accountlogic.NewLoginLogic(ctx, s.svcCtx)
 	return l.Login(in)
 }
+
+func (s *AccountServer) PhoneExist(ctx context.Context, in *foodi_user_service.PhoneExistRequest) (*foodi_user_service.PhoneExistReply, error) {
+	l := accountlogic.NewPhoneExistLogic(ctx, s.svcCtx)
+	return l.PhoneExist(in)
+}
