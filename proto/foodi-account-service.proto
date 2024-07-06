@@ -24,7 +24,7 @@ message RegisterRequest {
   int64 phone = 3;
   string code = 4;
   string password = 5;
-  int64 length = 6; // 密码登录时的部位长度
+  int64 length = 6; // 密码登录时的补位长度
 }
 
 message RegisterReply {

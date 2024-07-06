@@ -39,6 +39,7 @@ func main() {
 		// 注册用户服务
 		foodi_user_service.RegisterUserServer(grpcServer, userServer.NewUserServer(svc.Svc()))
 
+		// 注册文章服务
 		foodi_user_service.RegisterArticleServer(grpcServer, articleServer.NewArticleServer(svc.Svc()))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
