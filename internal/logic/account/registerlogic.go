@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	_const "github.com/foodi-org/foodi-user-service/internal/const"
 	"github.com/foodi-org/foodi-user-service/internal/pkg/snowflake"
 	"github.com/foodi-org/foodi-user-service/model"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"math/rand"
 	"time"
 
 	"github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
@@ -31,8 +33,15 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(in *foodi_user_service.RegisterRequest) (*foodi_user_service.RegisterReply, error) {
+	var (
+		user *model.UserInfo
+		res  sql.Result
+		aid  int64
+		err  error
+	)
+
 	// phone exist
-	_, err := l.svcCtx.AccountModel.FindWithPhone(l.ctx, in.GetPhone())
+	_, err = l.svcCtx.AccountModel.FindWithPhone(l.ctx, in.GetPhone())
 	switch {
 	case errors.Is(err, sqlx.ErrNotFound):
 		break
@@ -42,11 +51,11 @@ func (l *RegisterLogic) Register(in *foodi_user_service.RegisterRequest) (*foodi
 		return &foodi_user_service.RegisterReply{}, err
 	}
 
-	if err := l.svcCtx.DB.Transact(func(session sqlx.Session) error {
-		res, err := l.svcCtx.AccountModel.TransInsert(l.ctx, session, &model.AccountInfo{
+	err = l.svcCtx.DB.Transact(func(session sqlx.Session) error {
+		res, err = l.svcCtx.AccountModel.TransInsert(l.ctx, session, &model.AccountInfo{
 			Type:          sql.NullString{String: in.GetType().String(), Valid: true},
-			NikeName:      sql.NullString{String: "自动昵称", Valid: true},
-			Image:         sql.NullString{String: "这是基础用户头像oss地址", Valid: true},
+			NikeName:      l.generateNikeName(),
+			Image:         sql.NullString{String: l.defaultImage(), Valid: true},
 			Phone:         sql.NullInt64{Int64: in.GetPhone(), Valid: true},
 			Password:      sql.NullString{String: in.GetPassword(), Valid: len(in.GetPassword()) > 0},
 			FirstRegister: sql.NullString{String: time.Now().Format(time.DateTime), Valid: true},
@@ -56,7 +65,7 @@ func (l *RegisterLogic) Register(in *foodi_user_service.RegisterRequest) (*foodi
 			return err
 		}
 
-		aid, err := res.LastInsertId()
+		aid, err = res.LastInsertId()
 		if err != nil {
 			return err
 		}
@@ -80,24 +89,35 @@ func (l *RegisterLogic) Register(in *foodi_user_service.RegisterRequest) (*foodi
 			return err
 		}
 		return nil
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, err
 	}
+	user, err = l.svcCtx.UserInfoModel.TakeWithAid(l.ctx, aid)
+	return &foodi_user_service.RegisterReply{
+		Ok:  true,
+		Uid: user.Uid.Int64,
+	}, nil
+}
+func (l *RegisterLogic) generateNikeName() sql.NullString {
+	head := "袋熊"
+	now := time.Now().Unix()
+	return sql.NullString{String: head + fmt.Sprintf("%d", now), Valid: true}
+}
 
-	if reply, err := NewLoginLogic(l.ctx, l.svcCtx).Login(&foodi_user_service.LoginRequest{
-		Type:      in.GetType(),
-		LoginType: in.GetRegisterType(),
-		Phone:     in.GetPhone(),
-		Code:      in.GetCode(),
-		Password:  in.GetPassword(),
-		Length:    in.GetLength(),
-	}); err != nil {
-		return nil, err
-	} else {
-		return &foodi_user_service.RegisterReply{
-			Ok:    true,
-			Uid:   reply.GetUid(),
-			Token: reply.GetToken(),
-		}, nil
+func (l *RegisterLogic) defaultImage() string {
+	idx := rand.Intn(5)
+	switch idx {
+	case 0:
+		return "default 0 image address of oss"
+	case 1:
+		return "default 1 image address of oss"
+	case 2:
+		return "default 2 image address of oss"
+	case 3:
+		return "default 3 image address of oss"
+	case 4:
+		return "default 4 image address of oss"
 	}
+	return "final image address of oss"
 }

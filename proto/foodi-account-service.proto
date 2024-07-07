@@ -29,8 +29,7 @@ message RegisterRequest {
 
 message RegisterReply {
   bool ok = 1;
-  string token = 2;
-  int64 uid = 3;
+  int64 uid = 2;
 }
 
 message LoginRequest {
