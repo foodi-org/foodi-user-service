@@ -5,19 +5,21 @@ package user
 
 import (
 	"context"
-	foodi_user_service "github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
+
+	"github.com/foodi-org/foodi-user-service/github.com/foodi-org/foodi-user-service"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	UserDetailReply   = foodi_user_service.UserDetailReply
-	UserDetailRequest = foodi_user_service.UserDetailRequest
-	UserImageRequest  = foodi_user_service.UserImageRequest
-	UserOKReply       = foodi_user_service.UserOKReply
-	UserReply         = foodi_user_service.UserReply
-	UserRequest       = foodi_user_service.UserRequest
+	UpdateUserInfoRequest = foodi_user_service.UpdateUserInfoRequest
+	UserDetailReply       = foodi_user_service.UserDetailReply
+	UserDetailRequest     = foodi_user_service.UserDetailRequest
+	UserImageRequest      = foodi_user_service.UserImageRequest
+	UserOKReply           = foodi_user_service.UserOKReply
+	UserReply             = foodi_user_service.UserReply
+	UserRequest           = foodi_user_service.UserRequest
 
 	User interface {
 		// 获取用户基础信息
@@ -26,6 +28,7 @@ type (
 		DetailInfo(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error)
 		// 更新用户头像
 		UserImage(ctx context.Context, in *UserImageRequest, opts ...grpc.CallOption) (*UserOKReply, error)
+		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UserOKReply, error)
 	}
 
 	defaultUser struct {
@@ -55,4 +58,9 @@ func (m *defaultUser) DetailInfo(ctx context.Context, in *UserDetailRequest, opt
 func (m *defaultUser) UserImage(ctx context.Context, in *UserImageRequest, opts ...grpc.CallOption) (*UserOKReply, error) {
 	client := foodi_user_service.NewUserClient(m.cli.Conn())
 	return client.UserImage(ctx, in, opts...)
+}
+
+func (m *defaultUser) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UserOKReply, error) {
+	client := foodi_user_service.NewUserClient(m.cli.Conn())
+	return client.UpdateUserInfo(ctx, in, opts...)
 }

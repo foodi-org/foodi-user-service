@@ -4,6 +4,8 @@ package foodiUserService;
 
 option go_package="github.com/foodi-org/foodi-user-service";
 
+import "google/protobuf/any.proto";
+
 message UserRequest {
   int64 Uid = 1;
 }
@@ -42,6 +44,19 @@ message UserOKReply {
   bool ok = 1;
 }
 
+message UpdateUserInfoRequest {
+  int64 uuid = 1;
+  string nikeName = 2;
+  string cardID = 3;
+  string gender = 4;
+  int64 age = 5;
+  string birthday = 6;
+  string region = 7;
+  string name = 8;
+}
+
+
+
 // 用户信息 service
 service User {
 
@@ -53,4 +68,6 @@ service User {
 
   // 更新用户头像
   rpc UserImage(UserImageRequest) returns (UserOKReply);
+
+  rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UserOKReply);
 }

@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	User_BaseInfo_FullMethodName   = "/foodiUserService.User/BaseInfo"
-	User_DetailInfo_FullMethodName = "/foodiUserService.User/DetailInfo"
-	User_UserImage_FullMethodName  = "/foodiUserService.User/UserImage"
+	User_BaseInfo_FullMethodName       = "/foodiUserService.User/BaseInfo"
+	User_DetailInfo_FullMethodName     = "/foodiUserService.User/DetailInfo"
+	User_UserImage_FullMethodName      = "/foodiUserService.User/UserImage"
+	User_UpdateUserInfo_FullMethodName = "/foodiUserService.User/UpdateUserInfo"
 )
 
 // UserClient is the client API for User service.
@@ -34,6 +35,7 @@ type UserClient interface {
 	DetailInfo(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error)
 	// 更新用户头像
 	UserImage(ctx context.Context, in *UserImageRequest, opts ...grpc.CallOption) (*UserOKReply, error)
+	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UserOKReply, error)
 }
 
 type userClient struct {
@@ -71,6 +73,15 @@ func (c *userClient) UserImage(ctx context.Context, in *UserImageRequest, opts .
 	return out, nil
 }
 
+func (c *userClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UserOKReply, error) {
+	out := new(UserOKReply)
+	err := c.cc.Invoke(ctx, User_UpdateUserInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -81,6 +92,7 @@ type UserServer interface {
 	DetailInfo(context.Context, *UserDetailRequest) (*UserDetailReply, error)
 	// 更新用户头像
 	UserImage(context.Context, *UserImageRequest) (*UserOKReply, error)
+	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UserOKReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -96,6 +108,9 @@ func (UnimplementedUserServer) DetailInfo(context.Context, *UserDetailRequest) (
 }
 func (UnimplementedUserServer) UserImage(context.Context, *UserImageRequest) (*UserOKReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserImage not implemented")
+}
+func (UnimplementedUserServer) UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UserOKReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -164,6 +179,24 @@ func _User_UserImage_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UpdateUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_UpdateUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UpdateUserInfo(ctx, req.(*UpdateUserInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -182,6 +215,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserImage",
 			Handler:    _User_UserImage_Handler,
+		},
+		{
+			MethodName: "UpdateUserInfo",
+			Handler:    _User_UpdateUserInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -39,3 +39,8 @@ func (s *UserServer) UserImage(ctx context.Context, in *foodi_user_service.UserI
 	l := userlogic.NewUserImageLogic(ctx, s.svcCtx)
 	return l.UserImage(in)
 }
+
+func (s *UserServer) UpdateUserInfo(ctx context.Context, in *foodi_user_service.UpdateUserInfoRequest) (*foodi_user_service.UserOKReply, error) {
+	l := userlogic.NewUpdateUserInfoLogic(ctx, s.svcCtx)
+	return l.UpdateUserInfo(in)
+}
